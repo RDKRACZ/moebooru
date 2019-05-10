@@ -31,7 +31,8 @@ h1, h2, h3, h4 {
 
 body {
   font-size: 80%;
-  background: #222;
+  background: #ffe;
+  color: #800;
   padding: 1em 3em;
   margin: 0;
 }
@@ -1017,7 +1018,7 @@ div#post-view > div#right-col > div > div#note-container > div.note-body {
   padding: 5px;
   cursor: pointer;
   overflow: auto;
-  color: #222;
+  color: #800;
 }
 
 div#post-view > div#right-col > div > div#note-container > div.note-body > p.tn {
@@ -1388,7 +1389,8 @@ a.directlink:hover > .directlink-info {
 
 .top-corner-float {
 	position: fixed;
-	background: #222;
+	background: #ffe;
+    color: #800;
 	border: solid #000 2px;
 	padding: 6px;
 	top: 2px;
@@ -1403,7 +1405,8 @@ a.directlink:hover > .directlink-info {
 	min-width: 20em;
 	max-width: 30em;
 	padding: 2px;
-	background: #222;
+	background: #ffe;
+    color: #800;
 	position: absolute;
 	z-index: 2; /* over the regular post images */
 }
@@ -1581,7 +1584,8 @@ span.stars .star-3 { color:#ff0; }
 
 .post-browser {
   width: 100%;
-  background-color: #222;
+  background-color: #ffe;
+  color: #800;
   position: absolute;
   bottom: 0px;
   left: 0px;
@@ -2302,7 +2306,8 @@ table td.full {
 }
 div#news-ticker {
   padding: 5px;
-  background: #222;
+  background: #ffe;
+  color: #800;
   border-bottom: 2px solid #666;
   overflow: hidden;
   margin: -1em -3em 1em;

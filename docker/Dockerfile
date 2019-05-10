@@ -1,6 +1,8 @@
 
 FROM ruby:2.5
-COPY ./entrypoint.sh /
+ENV \
+  MB_DATABASE_URL=postgres://user:pass@somehost:5432/dbname \
+  MB_MEMCACHE_SERVERS=somehost:11211
 RUN \
   cd / && \
   apt-get update && \
@@ -18,13 +20,11 @@ RUN \
     libreadline-dev && \
   apt-get install -y \
     libssl1.0-dev \
-    nodejs-dev && \
-  git clone https://github.com/eientei/moebooru && \
+    nodejs-dev
+RUN git clone https://github.com/eientei/moebooru && \
   cd moebooru && \
   bundle install && \
   mv config config_tmpl && \
   mkdir -p config
-ENV \
-  MB_DATABASE_URL=postgres://user:pass@somehost:5432/dbname \
-  MB_MEMCACHE_SERVERS=somehost:11211
+COPY ./entrypoint.sh /
 ENTRYPOINT ["/entrypoint.sh"]

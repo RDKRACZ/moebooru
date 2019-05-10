@@ -35,7 +35,7 @@ CONFIG["local_image_service"] = CONFIG["app_name"]
 # Use web notation or check the list of possible colors here:
 #   http://www.imagemagick.org/script/color.php
 # Default: gray
-# CONFIG['bgcolor'] = 'gray'
+CONFIG['bgcolor'] = '#ffffee'
 
 # Map tag type ids with names.
 # The primary one is the one starts with uppercase.
