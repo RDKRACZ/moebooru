@@ -1,0 +1,33 @@
+version: '3.5'
+services:
+  moebooru:
+    build:
+      context: .
+    image: "moebooru:latest"
+    restart: "unless-stopped"
+    depends_on:
+      - postgres
+      - memcached
+    ports:
+      - "8080:8080"
+    volumes:
+      - "./data-moeconfig:/moebooru/config"
+    environment:
+      MB_DATABASE_URL: "postgres://moedb:moedb@postgres:5432/moedb"
+      MB_MEMCACHE_SERVERS: "memcached:11211"
+  postgres:
+    image: "postgres:9.6"
+    restart: "unless-stopped"
+    environment:
+      POSTGRES_USER: "moedb"
+      POSTGRES_PASSWORD: "moedb"
+      POSTGRES_DB: "moedb"
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    expose:
+      - "5432"
+    volumes:
+      - "./data-postgres:/var/lib/postgresql/data"
+  memcached:
+    image: "memcached:latest"
+    restart: "unless-stopped"
+
