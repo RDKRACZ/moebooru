@@ -402,7 +402,7 @@ table tr.highlight {
 }
 
 table tr.pending-tag {
-  background: #503030;
+  background: #f0e000;
 }
 
 textarea {
@@ -1114,7 +1114,7 @@ div.comment > div.author {
 div.response-list > div.comment > div.author {
   color: #117743;
   float: left;
-  width: 12em;
+  width: 100%;
   padding-right: 1em;
   overflow: hidden;
 }
