@@ -26,7 +26,7 @@
 
 <div id="sizing-body">
 
-<div id="debug2" style="position: fixed; bottom: 100px; background-color: #000;"></div>
+<div id="debug2" style="position: fixed; bottom: 100px; background-color: #ffe; color: #800;"></div>
 
 <div id="post-browser" class="post-browser" style="display: none;">
   <a style="display: none;" class="browser-thumb-hover-overlay" href="#" tabindex="-1">
@@ -105,9 +105,9 @@
     <div style="padding: 0.5em;">
       <div>
         <%= t('.post_num_html', :num => link_to(content_tag(:span, '', :class => 'post-id'), '#', :class => 'post-id-link')) %>
-        <span style="background-color: #000; margin-left: 0.25em; padding: 0 0.5em;" class="post-dimensions"></span>
-        <span style="background-color: #000; margin-left: 0.25em; padding: 0 0.5em;" class="post-rating"></span>
-        <span style="background-color: #000; margin-left: 0.25em; padding: 0 0.5em;" class="post-hidden"><%= t('.hidden') %></span>
+        <span style="background-color: #ffe; color: #800; margin-left: 0.25em; padding: 0 0.5em;" class="post-dimensions"></span>
+        <span style="background-color: #ffe; color: #800; margin-left: 0.25em; padding: 0 0.5em;" class="post-rating"></span>
+        <span style="background-color: #ffe; color: #800; margin-left: 0.25em; padding: 0 0.5em;" class="post-hidden"><%= t('.hidden') %></span>
       </div>
     <div class="pool-info"></div>
     <div><%= t('.by.all_html', :text => t('.by.text'), :ago => t('time.x_ago_html', :t => content_tag(:span, '', :class => 'posted-at')), :by => content_tag(:span, t('.by.by_html', :user => link_to('', '#')), :class => 'posted-by')) %></div>

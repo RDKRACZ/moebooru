@@ -154,15 +154,12 @@ CONFIG["local_image_service"] = ""
 
 # List of image services available for similar image searching.
 CONFIG["image_service_list"] = {
-  "danbooru.donmai.us" => "http://haruhidoujins.yi.org/multi-search.xml",
-  "moe.imouto.org" => "http://haruhidoujins.yi.org/multi-search.xml",
-  "konachan.com" => "http://haruhidoujins.yi.org/multi-search.xml"
 }
 
 # If true, image services receive a URL to the thumbnail for searching, which
 # is faster.  If false, the file is sent directly.  Set to false if using image
 # services that don't have access to your image URLs.
-CONFIG["image_service_local_searches_use_urls"] = true
+CONFIG["image_service_local_searches_use_urls"] = false
 
 # If true, run a dupe check on new uploads using the image search
 # for local_image_service.
@@ -288,7 +285,7 @@ CONFIG["standalone"] = true if CONFIG["standalone"].nil?
 CONFIG["bundler_groups"] ||= [:default, Rails.env]
 CONFIG["bundler_groups"] << "standalone" if CONFIG["standalone"]
 
-CONFIG["bgcolor"] ||= "gray"
+CONFIG["bgcolor"] ||= "#ffffee"
 
 CONFIG["threads"] ||= (ENV["MB_THREADS"] || 1).to_i
 

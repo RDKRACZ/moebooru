@@ -15,7 +15,7 @@ body {
 }
 
 body, div, h1, h2, h3, h4, h5, h6, p, ul, li, dd, dt {
-  color: white;
+  color: #800;
   font-family: verdana, sans-serif;
   margin: 0;
   padding: 0;
@@ -53,15 +53,17 @@ body.not-moderator .moderator-only { display: none !important; }
 body.not-member .member-only { display: none !important; }
 
 .action-post-show > body {
-  background: #000;
+  background: #ffe;
+  color: #800;
 }
 .action-post-browse > body {
-  background: #000;
+  background: #ffe;
+  color: #800;
   padding: 0;
 }
 
 a:link {
-  color: #ee8887;
+  color: #c00;
   text-decoration: none;
 }
 
@@ -72,18 +74,22 @@ a.star { background: transparent image-url('blank.gif') no-repeat; }
 }
 
 a:visited {
-  color: #ee8887;
+  color: #a00;
   text-decoration: none;
 }
 
 a:hover {
-  color: #ffaaae;
+  color: #f55;
   text-decoration: none;
 }
 
 a:active {
-  color: #006FFA;
+  color: #f55;
   text-decoration: none;
+}
+
+.comment.avatar-container {
+  background-color: #f0e0d6;
 }
 
 a.last-page {
@@ -170,8 +176,9 @@ div#title {
   margin: 0 0 .5em -3em;
   height: 75px;
 }
-h2#site-title img#logo {
+h2 img#logo {
   float: left;
+  padding-left: 35px;
 }
 
 h2#site-title span {
@@ -224,17 +231,14 @@ input {
  * to make it visible, and we need to do this only on WebKit--if we set other browsers to
  * white, it'll be unreadable on the white background. */
 HTML.webkit input[type=file] {
-  color: #FFF;
+  background: #ffe;
+  color: #800;
 }
 
 input[type=password]:focus {
-  background: #FFC;
-	color: #000;
 }
 
 input[type=text]:focus {
-  background: #FFC;
-	color: #000;
 }
 
 label {
@@ -255,15 +259,15 @@ p {
 }
 
 span.author {
-  color: gray;
+  color: #117743;
 }
 
 span.date {
-  color: #AAA;
+  color: #800;
 }
 
 span.date a {
-  color: #AAA;
+  color: #800;
 }
 
 span.group {
@@ -330,18 +334,18 @@ table.form p {
 }
 
 table.form th {
-  color: white;
+  color: #800;
   white-space: normal;
   padding-right: 1em;
   text-align: right;
-  background: #333;
+  background: #ffe;
 }
 
 table.highlightable {
 }
 
 table.highlightable > tbody > tr:hover {
-  background: #67100F;
+  background: #eee;
 }
 
 table.highlightable th {
@@ -376,8 +380,8 @@ table tr.bad {
 }
 
 table tr.even {
-  color: white;
-  background: #444 ;
+  color: #800;
+  background: #f0e0d6;
 }
 
 table tr.good {
@@ -385,12 +389,12 @@ table tr.good {
 }
 
 tr.odd {
-  color: white;
-  background: #333;
+  color: #800;
+  background: #ffe;
 }
 
 table tr.selected {
-  background: #044 !important; /* override highlightable */
+  background: #faa !important; /* override highlightable */
 }
 
 table tr.highlight {
@@ -413,8 +417,6 @@ textarea.no-block {
 }
 
 textarea:focus {
-  background: #FFC;
-  color: #000;
 }
 
 ul {
@@ -439,13 +441,13 @@ ul.bare-list li {
   outline: none;
 }
 #main-menu .selected-menu {
-  background: #ffffff;
+  background: #ffe;
 }
 #main-menu .current-menu > A {
-  color: #ffbbbb;
+  color: #f55;
 }
 #main-menu .selected-menu > A {
-  color: #000000;
+  color: #f55;
 }
 #main-menu .bolded {
   font-weight: bold;
@@ -463,7 +465,8 @@ ul.bare-list li {
 }
 .dropdown-menu {
   position: absolute;
-  background: #000000;
+  color: #800;
+  background: #ffe;
   padding: 2px 2px;
 
   /* Some items, like forum titles, may be very long.  Clamp the box size. */
@@ -473,7 +476,7 @@ ul.bare-list li {
   /* Dropdowns should render over most page elements, like the avatar crop overlay, but
    * not on top of the login overlay. */
   z-index: 100;
-  border: 1px solid #555555;
+  border: 1px solid #800;
 }
 .dropdown-menu .submenu {
   display: block;
@@ -482,8 +485,8 @@ ul.bare-list li {
   font-size: 140%;
 }
 .dropdown-menu .focused-menu-item {
-  background: #ffffff;
-  color: #000000;
+  background: #f0e0d6;
+  color: #800;
 }
 
 ul.flat-list {
@@ -531,12 +534,20 @@ ul.link-page > li {
   list-style-type: none;
 }
 
+.tag-type-general > a, #history .tag-type-general, .color-tag-types .tag-type-general {
+  color: #0073ff;
+}
+
+.tag-type-general > a:hover {
+  color: #80b9ff;
+}
+
 .tag-type-artist > a, #history .tag-type-artist, .color-tag-types .tag-type-artist {
-  color: #cccc00;
+  color: #a00;
 }
 
 .tag-type-artist > a:hover {
-  color: #33CFFF;
+  color: #b66;
 }
 
 .tag-type-faults > a, #history .tag-type-faults, .color-tag-types .tag-type-faults {
@@ -560,15 +571,15 @@ ul.link-page > li {
 }
 
 .tag-type-character > a:hover {
-  color: #33CFFF;
+  color: #6b6;
 }
 
 .tag-type-copyright > a, #history .tag-type-copyright, .color-tag-types .tag-type-copyright {
-  color: #D0D;
+  color: #a0a;
 }
 
 .tag-type-copyright > a:hover {
-  color: #33CFFF;
+  color: #b6b;
 }
 
 .upload-progress-bar
@@ -588,7 +599,7 @@ ul.link-page > li {
 .tag-completion-box
 {
   position: absolute;
-  background-color: #002;
+  background-color: #f0e0d6;
   top: 0;
   left: 0;
   z-index: 10; /* above the quick edit box */
@@ -611,7 +622,7 @@ ul.link-page > li {
 
 .tag-completion-box .completed-tag.focused
 {
-  background-color: #005;
+  background-color: #f0e0d6;
 }
 .tag-completion-box .completed-tag.recent-tag
 {
@@ -627,11 +638,11 @@ ul.link-page > li {
   padding-right: 0.5em;
   padding-left: 0.25em;
   position: absolute;
-  background-color: #002;
+  background-color: #f0e0d6;
 }
 
 .added {
-  color: #00CC00;
+  color: #008800;
 }
 
 .removed {
@@ -708,7 +719,8 @@ div#comment-list > div.post > div.col1 {
 div#comment-list > div.post > div.col2 {
   float: left;
   width: 50em;
-  background-color: #333;
+  color: #800;
+  background-color: #ffe;
   padding: 1px 4px 3px 4px;
   margin-bottom: 1em;
 }
@@ -879,14 +891,14 @@ div#mail-show div.message {
 
 div#notice {
   font-size: 1.5em;
-  color: white;
+  color: #800;
   font-weight: bold;
   padding: 0px 3px 0px 3px;
   border: 1px solid #ddd;
   /* Use a margin to prevent the box from falling under scrollbars. */
   max-width: 800px;
   border-top: none;
-  background-color: #333;
+  background-color: #ffe;
 }
 
 /* Using margin-left: auto; margin-right: auto; to center doesn't seem to work
@@ -928,7 +940,7 @@ div#old-browser
   text-align: center;
   padding: 1em;
   margin: 1em;
-  background: black;
+  background: #f0e0d6;
 }
 
 div#old-browser > #old-browser-hide
@@ -969,12 +981,12 @@ div#paginator a.arrow {
 .text-button:hover
 {
 	background: rgb(60, 60, 220);
-	color: white;
+	color: #f55;
 }
 
 div#paginator a.arrow:hover {
-  background: white;
-  color: #33CFFF;
+  background: #f0e0d6;
+  color: #f55;
 }
 
 div#paginator .current {
@@ -985,7 +997,7 @@ div#paginator .current {
 
 div#paginator a:hover {
   background: rgb(60, 60, 220);
-  color: white;
+  color: #f55;
 }
 
 div#paginator span {
@@ -1036,7 +1048,7 @@ div#post-view > div#right-col > div > div#note-container > div.note-box {
 }
 
 div#post-view > div#right-col > div > div#note-container > div.note-box > div.note-corner {
-  background: black;
+  background: #f0e0d6;
   width: 7px;
   height: 7px;
   position: absolute;
@@ -1084,13 +1096,19 @@ div#related > div.tag-column > a {
 
 div.response-list > div.comment {
   float: left;
-  margin-bottom: 1.5em;
+  margin-bottom: 2px;
+  padding: 0.5em;
 }
 div.response-list#forum {
   width: 50em;
 }
 
+.author h6 > a {
+  color: #117743 !important;
+}
+
 div.response-list > div.comment > div.author {
+  color: #117743;
   float: left;
   width: 12em;
   padding-right: 1em;
@@ -1135,7 +1153,7 @@ div.sidebar li {
 }
 
 a.original-file-changed#highres-show {
-  color: #CC0;
+  color: #880;
 }
 
 div#static-index {
@@ -1161,10 +1179,10 @@ div#static-more > div > ul > li {
 }
 
 div.status-notice {
-  border: 2px solid #666;
+  border: 2px solid #800;
   padding: 1em;
   margin: 1em;
-  background: black;
+  background: #f0e0d6;
 }
 
 div.status-notice p {
@@ -1209,7 +1227,7 @@ div#user-record > table > tbody > tr.negative-record {
 }
 
 div.wiki > h2.title {
-  color: #99F;
+  color: #800;
   font-size: 1.6em;
 }
 
@@ -1324,7 +1342,7 @@ img.preview {
 }
 
 a.directlink {
-        background: #555;
+        background: #ffe;
         display: block;
         height: 15px;
         padding: 1px 0 1px 0;
@@ -1336,7 +1354,7 @@ a.directlink {
 }
 
 a.largeimg {
-        background: #111;
+        background: #f0e0d6;
 }
 
 .highlighted-post > a.directlink {
@@ -1355,7 +1373,7 @@ a.directlink > span.directlink-res {
         display: none;
         margin: 0;
         padding: 0;
-        color: #ee8887;
+        color: #800;
         vertical-align: top;
 }
 
@@ -1391,7 +1409,7 @@ a.directlink:hover > .directlink-info {
 	position: fixed;
 	background: #ffe;
     color: #800;
-	border: solid #000 2px;
+	border: solid #800 2px;
 	padding: 6px;
 	top: 2px;
 	right: 2px;
@@ -1401,7 +1419,7 @@ a.directlink:hover > .directlink-info {
 }
 
 .post-hover {
-	border: 2px solid #000;
+	border: 2px solid #800;
 	min-width: 20em;
 	max-width: 30em;
 	padding: 2px;
@@ -1419,7 +1437,7 @@ a.directlink:hover > .directlink-info {
         vertical-align: top;
         border-width: 0 2px 2px 2px;
         border-style: solid;
-        border-color: #000;
+        border-color: #800;
         margin-left: -2px;
 }
 
@@ -1427,7 +1445,8 @@ a.directlink:hover > .directlink-info {
 .no-focus-outline:focus { outline: none; }
 
 .post-hover #hover-top-line {
-	background: #333;	
+    color: #800;
+	background: #ffe;	
 	white-space: nowrap;
 	width: 100%;
 }
@@ -1450,7 +1469,7 @@ body.dragging-to-post .thumb * {
 }
 
 .similar-original {
-  background-color: #000;
+  background-color: #ffe;
 }
 .similar-match span.similar-text {
 	font-weight: bold;
@@ -1484,9 +1503,9 @@ img.service-icon#source {
 	display: inline;
 }
 
-span.stars .star-1 { color:#0a0; }
-span.stars .star-2 { color:#0f0; }
-span.stars .star-3 { color:#ff0; }
+span.stars .star-1 { color:#800; }
+span.stars .star-2 { color:#800; }
+span.stars .star-3 { color:#800; }
 
 .star:focus {
 	outline: none;
@@ -1576,7 +1595,7 @@ span.stars .star-3 { color:#ff0; }
 }
 
 .del-mode {
-  color: #ee8887;
+  color: #800;
 }
 .del-mode > label {
   font-weight: normal;
@@ -1681,7 +1700,7 @@ textarea.edit-item { border: none; }
   vertical-align: top;
   border-width: 2px 2px 2px 2px;
   border-style: solid;
-  border-color: #000;
+  border-color: #800;
 }
 
 .post-info {
@@ -1691,7 +1710,7 @@ textarea.edit-item { border: none; }
   min-width: 250px;
   max-width: 500px;
   height: auto;
-  background-color: #005;
+  background-color: #f0e0d6;
 }
 
 .post-info ul {
@@ -1731,8 +1750,8 @@ textarea.edit-item { border: none; }
   margin: 0 0.25em;
   font-weight: bold;
   padding: 0 2px;
-  border: 1px solid #FFF;
-  background-color: #005;
+  border: 1px solid #800;
+  background-color: #f0e0d6;
 }
 .frame-editor .frame-down
 {
@@ -1742,7 +1761,7 @@ textarea.edit-item { border: none; }
   margin: 0 0.5em;
 }
 .frame-editor TR.frame-focused .frame-label {
-  color: #000;
+  color: #800;
 }
 .frame-editor TR.frame-focused {
   background: #aaa;
@@ -1796,7 +1815,8 @@ body.not-dragging .frame-box-handle.se-resize { cursor: se-resize; }
   overflow: hidden;
   width: 120px;
   height: 120px;
-  background-color: #000;
+  color: #800;
+  background-color: #ffe;
 }
 .frame-editor-popup-div
 {
@@ -1817,7 +1837,7 @@ body.not-dragging .frame-box-handle.se-resize { cursor: se-resize; }
 
 .image-navigator-box
 {
-  border: 1px solid #000;
+  border: 1px solid #800;
 }
 
 .navigator-cursor
@@ -1826,7 +1846,7 @@ body.not-dragging .frame-box-handle.se-resize { cursor: se-resize; }
 }
 
 #post-content A.disabled {
-  color: #555;
+  color: #ffe;
 }
 
 .avatar-crop {
@@ -1853,7 +1873,8 @@ body.not-dragging .frame-box-handle.se-resize { cursor: se-resize; }
 .crop-preview-frame {
 	width: 110px;
 	height: 110px;
-	background-color: #333;
+    color: #800;
+	background-color: #ffe;
 }
 
 .comment-avatar-container
@@ -1901,7 +1922,8 @@ body.not-dragging .frame-box-handle.se-resize { cursor: se-resize; }
 }
 
 .imgCrop_overlay {
-	background-color: #000;
+        color: #800;
+	background-color: #ffe;
 	opacity: 0.5;
 	filter:alpha(opacity=50);
 	position: absolute;
@@ -1958,10 +1980,10 @@ body.not-dragging .frame-box-handle.se-resize { cursor: se-resize; }
 	background: transparent;
 	filter: Invert;
 }
-* html .imgCrop_marqueeNorth { border-top: 1px dashed #000; }
-* html .imgCrop_marqueeEast  { border-right: 1px dashed #000; }
-* html .imgCrop_marqueeSouth { border-bottom: 1px dashed #000; }
-* html .imgCrop_marqueeWest  { border-left: 1px dashed #000; }
+* html .imgCrop_marqueeNorth { border-top: 1px dashed #800; }
+* html .imgCrop_marqueeEast  { border-right: 1px dashed #800; }
+* html .imgCrop_marqueeSouth { border-bottom: 1px dashed #800; }
+* html .imgCrop_marqueeWest  { border-left: 1px dashed #800; }
 */
 
 .imgCrop_marqueeNorth { top: 0; left: 0; }
@@ -1972,7 +1994,7 @@ body.not-dragging .frame-box-handle.se-resize { cursor: se-resize; }
 
 .imgCrop_handle {
 	position: absolute;
-	border: 1px solid #333;
+	border: 1px solid #ffe;
 	width: 6px;
 	height: 6px;
 	background: #FFF;
@@ -2104,8 +2126,8 @@ body.not-dragging .frame-box-handle.se-resize { cursor: se-resize; }
 #login {
 	margin-left: auto;
 	margin-right: auto;
-	background: #111;
-	border: 1px solid #111;
+	background: #f0e0d6;
+	border: 1px solid #800;
 
 	height: 18em;
 }
@@ -2125,24 +2147,24 @@ ul.login-tabs li {
 ul.login-tabs li > a {
 	display: block;
 	height: 1.4em;
-	background: #111;
+	background: #f0e0d6;
 	padding: 2px 6px 0px 6px;
 	border-width: 1px 1px 0px 1px;
 	border-style: solid;
 	border-color: #444;
 	font-weight: bold;
-	color: white;
+	color: #800;
 }
 
 ul.login-tabs .selected > a {
-	background: #111;
-	color: white;
+	background: #f0e0d6;
+	color: #f55;
 	border-color: #eee;
 }
 
 ul.login-tabs li > a:hover {
   background: rgb(60, 60, 220);
-  color: white;
+  color: #f55;
 }
 
 #login-popup-submit {
@@ -2153,7 +2175,7 @@ ul.login-tabs li > a:hover {
 
 #login-popup-submit:hover {
   background: rgb(60, 60, 220);
-  color: white;
+  color: #f55;
 }
 
 #login-popup-notices {
@@ -2211,7 +2233,7 @@ P,.inline-image + .inline-image > .inline-thumb
 
 .inline-image .expanded-image .main-inline-image > img
 {
-	border: 2px solid #000;
+	border: 2px solid #800;
 }
 
 .inline-image .expanded-image-ui > .expanded-image
@@ -2237,7 +2259,7 @@ P,.inline-image + .inline-image > .inline-thumb
 .inline-image .expanded-image-ui .select-image:hover
 {
 	background: rgb(40, 40, 180);
-	color: white;
+	color: #f55;
 }
 .inline-image .expanded-image-ui .select-image:focus
 {
@@ -2247,7 +2269,7 @@ P,.inline-image + .inline-image > .inline-thumb
 .inline-image .expanded-image-ui .select-image.selected-image-tab
 {
 	background: rgb(60, 60, 220);
-	color: white;
+	color: #800;
 }
 
 .inline-image .expanded-image-ui .edit-link

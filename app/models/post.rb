@@ -14,6 +14,7 @@ class Post < ApplicationRecord
   has_many :post_votes
   has_many :avatars, :class_name => "User", :foreign_key => "avatar_post_id"
   set_callback :delete, :before, :clear_avatars
+  after_create :index_iqdb
   after_save :commit_flag
   has_and_belongs_to_many :_tags, :class_name => "Tag"
   scope :available, lambda { where.not :status => "deleted" }
@@ -122,6 +123,12 @@ class Post < ApplicationRecord
       update(:status => "flagged")
       set_flag_detail(reason, creator_id)
     end
+  end
+
+  def index_iqdb
+    return true unless image?
+    system("/iqdb-script.sh", self.id.to_s, file_path)
+    true
   end
 
   # If the flag_post metatag was used and the current user has access, flag the post.
