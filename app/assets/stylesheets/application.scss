@@ -1103,6 +1103,10 @@ div.response-list#forum {
   width: 50em;
 }
 
+div.comment > div.author {
+  width: 100%;
+}
+
 .author h6 > a {
   color: #117743 !important;
 }
@@ -1113,6 +1117,9 @@ div.response-list > div.comment > div.author {
   width: 12em;
   padding-right: 1em;
   overflow: hidden;
+}
+div.response-list > div.comment > div.author > h6 {
+  display: inline;
 }
 
 div.response-list > div.comment > div.author > h6 {
