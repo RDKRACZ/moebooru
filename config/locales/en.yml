@@ -983,6 +983,7 @@ en:
         info: Please keep the following guidelines in mind when uploading something. Consistently violating these rules will result in a ban.
         last_word_connector_or: ', or '
         limit: You can only upload %{n} today.
+        limit_anonymous: Anonymous users can only upload %{n} today.
         more_html: Read the %{more_link}
         more_link: tagging guidelines
         title: Upload Guidelines

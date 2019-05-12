@@ -4,8 +4,8 @@ class PostController < ApplicationController
   layout "default"
   helper :avatar
 
-  before_action :member_only, :only => [:create, :destroy, :delete, :flag, :revert_tags, :activate, :update_batch, :vote]
-  before_action :post_member_only, :only => [:update, :upload, :flag]
+  before_action :member_only, :only => [:destroy, :delete, :flag, :revert_tags, :activate, :update_batch, :vote]
+  before_action :post_member_only, :only => [:flag]
   before_action :janitor_only, :only => [:moderate, :undelete]
   before_action :set_query_date, :only => [:popular_by_day, :popular_by_week, :popular_by_month]
   after_action :save_tags_to_cookie, :only => [:update, :create]
@@ -35,9 +35,14 @@ class PostController < ApplicationController
   end
 
   def create
-    if @current_user.is_member_or_lower? && Post.where(:user_id => @current_user.id).where("created_at > ?", 1.day.ago).count >= CONFIG["member_post_limit"]
-      respond_to_error("Daily limit exceeded", { :action => "error" }, :status => 421)
-      return
+    if @current_user.is_anonymous? && Post.where(:user_id => @current_user.id).where("created_at > ?", 1.day.ago).count >= CONFIG["anonymous_post_limit"]
+        respond_to_error("Daily limit for anonynous users exceeded", { :action => "error" }, :status => 421)
+        return
+    else
+      if @current_user.is_member_or_lower? && Post.where(:user_id => @current_user.id).where("created_at > ?", 1.day.ago).count >= CONFIG["member_post_limit"]
+        respond_to_error("Daily limit exceeded", { :action => "error" }, :status => 421)
+        return
+      end
     end
 
     if @current_user.is_privileged_or_higher?
@@ -47,7 +52,7 @@ class PostController < ApplicationController
     end
 
     if params[:anonymous] == "1" && @current_user.is_contributor_or_higher?
-      user_id = nil
+      user_id = User.find_by_name("Anonymous")
       # FIXME: someone track down the user of Thread evilry here and nuke
       #        it please?
       Thread.current["danbooru-user"] = nil

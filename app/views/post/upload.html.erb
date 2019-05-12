@@ -28,7 +28,12 @@
         <li><%= link_to t('.guidelines.group'), help_path("post_relationships") %></li>
         <li><%= t('.guidelines.more_html', :more_link => link_to(t('.guidelines.more_link'), help_path("tags"))) %></li>
       </ul>
-      <p><%= t('.guidelines.limit', :n =>  pluralize(CONFIG["member_post_limit"] - Post.where(:user_id => @current_user.id).where("created_at > ?", 1.day.ago).count, "post")) %></p>
+      <% if @current_user.is_anonymous? %>
+        <p><%= t('.guidelines.limit_anonymous', :n =>  pluralize(CONFIG["anonymous_post_limit"] - Post.where(:user_id => @current_user.id).where("created_at > ?", 1.day.ago).count, "post")) %></p>
+      <% else %>
+        <p><%= t('.guidelines.limit', :n =>  pluralize(CONFIG["member_post_limit"] - Post.where(:user_id => @current_user.id).where("created_at > ?", 1.day.ago).count, "post")) %></p>
+      <% end %>
+      
     </div>
   <% end %>
 

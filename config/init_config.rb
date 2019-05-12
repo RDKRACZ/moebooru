@@ -119,6 +119,8 @@ CONFIG["comment_threshold"] = 40
 # Members cannot post more than X posts in a day.
 CONFIG["member_post_limit"] = 16
 
+CONFIG["anonymous_post_limit"] = 32
+
 # Members cannot post more than X comments in an hour.
 CONFIG["member_comment_limit"] = 2
 
