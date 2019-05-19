@@ -1,4 +1,4 @@
-class AddShowAdvancedEditing < ActiveRecord::Migration[5.1]
+class AddUserLocale < ActiveRecord::Migration[5.1]
   def self.up
     add_column :users, :locale, :string, :default => "", :null => ""
   end
