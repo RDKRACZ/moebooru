@@ -103,9 +103,7 @@
             <p><%=t :user_locale_desc %></p>
           </th>
           <td>
-            <select name="user_locale">
-              <%= options_for_select CONFIG["available_locales"] %>
-            </select>
+            <%= select("user", "locale", options_for_select(CONFIG["available_locales"], @current_user.locale.blank? ? "en" : @current_user.locale)) %>
           </td>
         <tr/>
       </tbody>
