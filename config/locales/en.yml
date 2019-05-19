@@ -1300,6 +1300,8 @@ en:
   user7: "Edit Tags"
   user8: "These will be accessible when you "
   user9: "upload"
+  user_locale: "User locale"
+  user_locale_desc: "User preferred locale"
   user_address: "Address"
   user_address_text: "IP masks may be used, such as 127.0.0.1/24"
   user_ban: "Ban"

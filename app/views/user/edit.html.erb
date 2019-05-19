@@ -97,6 +97,17 @@
             <%= check_box "user", "show_advanced_editing" %>
           </td>
         </tr>
+        <tr>
+          <th>
+            <label class="block" for="user_locale"><%=t :user_locale %></label>
+            <p><%=t :user_locale_desc %></p>
+          </th>
+          <td>
+            <select name="user_locale">
+              <%= options_for_select CONFIG["available_locales"] %>
+            </select>
+          </td>
+        <tr/>
       </tbody>
     </table>
   <% end %>

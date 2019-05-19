@@ -1540,6 +1540,7 @@ CREATE TABLE public.users (
     last_comment_read_at timestamp with time zone DEFAULT '1960-01-01 00:00:00'::timestamp without time zone NOT NULL,
     last_deleted_post_seen_at timestamp with time zone DEFAULT '1960-01-01 00:00:00'::timestamp without time zone NOT NULL,
     show_advanced_editing boolean DEFAULT false NOT NULL,
+    locale text DEFAULT ''::text NOT NULL,
     language text DEFAULT ''::text NOT NULL,
     secondary_languages text DEFAULT ''::text NOT NULL,
     pool_browse_mode integer DEFAULT 1 NOT NULL,

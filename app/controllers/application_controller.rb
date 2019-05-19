@@ -309,6 +309,12 @@ class ApplicationController < ActionController::Base
       else
         cookies["show_advanced_editing"] = "0"
       end
+
+      if !(@current_user.locale.blank?)
+        cookies["locale"] = @current_user.locale
+        I18n.locale = @current_user.locale.to_sym
+      end
+
       cookies["my_tags"] = @current_user.my_tags
       cookies["held_post_count"] = @current_user.held_post_count.to_s
     end
@@ -349,7 +355,7 @@ class ApplicationController < ActionController::Base
 
   def set_locale
     if params[:locale] && CONFIG["available_locales"].include?(params[:locale])
-      cookies["locale"] = { :value => params[:locale], :expires => 1.year.from_now }
+      #cookies["locale"] = { :value => params[:locale], :expires => 1.year.from_now }
       I18n.locale = params[:locale].to_sym
     elsif cookies["locale"] && CONFIG["available_locales"].include?(cookies["locale"])
       I18n.locale = cookies["locale"].to_sym
