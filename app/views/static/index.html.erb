@@ -17,16 +17,19 @@
   </div>
   <div style="font-size: 80%; margin-bottom: 2em;">
     <p>
+      <% $cnt = Post.fast_count %>
+      <% [Math.log10($cnt),0].max.floor.downto(0).each do |i| %>
+      <% $p = 10 ** i %>
+      <% $digit = $cnt / $p %>
+      <%= image_tag "counter/%d.gif" % [$digit], :alt => $digit %>
+      <% $cnt %= $p %>
+      <% end %>
+    </p>
+    <p>
       <% if @current_user %>
         <%= mail_to CONFIG["admin_contact"], "Contact", :encode => "javascript" %> &ndash;
       <% end %>
-      <%=t :static_serve %><%= number_with_delimiter Post.fast_count %><%=t :static_posts2 %>&ndash; <%=t :static_running %><%= CONFIG["version"] %>
-      <br />
-      <% $cnt = Post.fast_count %>
-      <% @dig = $cnt.to_s.scan(/./) %>
-      <% @dig.each do |i| %>
-      <%= image_tag i.concat(".gif"), :alt => i %>
-      <% end %>
+      <%=t :static_running %><%= CONFIG["version"] %>
       <%=t :static_translation %>
     </p>
   </div>

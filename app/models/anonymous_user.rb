@@ -1,7 +1,8 @@
 # encoding: utf-8
 class AnonymousUser
   def id
-    User.find_by_name("Anonymous").id
+    user = User.find_by_name("Anonymous")
+    user ? user.id : 0
   end
 
   def level

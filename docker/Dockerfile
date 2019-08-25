@@ -1,6 +1,6 @@
 FROM eientei/iqdb:latest as iqdb
 FROM eientei/iqdb-query:latest as iqdb-query
-FROM ruby:2.5
+FROM ruby:2.5-stretch
 ENV \
   MB_DATABASE_URL=postgres://user:pass@somehost:5432/dbname \
   MB_MEMCACHE_SERVERS=somehost:11211 \
