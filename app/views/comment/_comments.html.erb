@@ -13,6 +13,7 @@
     <%= form_tag({:controller => "comment", :action => "create"}, {:level => :member}) do %>
       <%= hidden_field_tag "comment[post_id]", post_id, :id => "comment_post_id_#{post_id}" %>
       <%= text_area "comment", "body", :rows => "7", :id => "reply-text-#{post_id}", :style=>"width: 98%; margin-bottom: 2px;" %>
+      <div class="g-recaptcha" data-sitekey="<%= ENV['REACAPTCHA_SITE_KEY'] %>"></div>
       <%= submit_tag t('.post') %>
       <!-- <%= submit_tag t('.bump') %> -->
     <% end %>
@@ -20,6 +21,7 @@
   <% end %>
 </div>
 
+<script type="text/javascript" src="https://www.google.com/recaptcha/api.js"></script>
 <script type="text/javascript">
   <%= avatar_init %>
   InlineImage.init();

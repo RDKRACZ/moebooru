@@ -1,3 +1,5 @@
+require 'net/http'
+
 class CommentController < ApplicationController
   layout "default"
   helper :avatar
@@ -31,6 +33,16 @@ class CommentController < ApplicationController
   end
 
   def create
+    if @current_user.is_anonymous?
+       response = params['g-recaptcha-response']
+       uri = URI('https://www.google.com/recaptcha/api/siteverify')
+       res = Net::HTTP.post_form(uri, 'secret' => ENV['RECAPTCHA_SECRET_KEY'], 'response' => response, 'remoteip' => request.remote_ip)
+       if not JSON.parse(res.body)['success']
+         respond_to_error("CAPTCHA error", { :action => "index" }, :status => 401)
+         return
+       end
+    end
+
     if @current_user.is_member_or_lower? && params[:commit] == "Post" && Comment.where(:user_id => @current_user.id).where('created_at > ?', 1.hour.ago).count >= CONFIG["member_comment_limit"]
       # TODO: move this to the model
       respond_to_error("Hourly limit exceeded", { :action => "index" }, :status => 421)
