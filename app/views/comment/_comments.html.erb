@@ -14,7 +14,8 @@
       <%= hidden_field_tag "comment[post_id]", post_id, :id => "comment_post_id_#{post_id}" %>
       <%= text_area "comment", "body", :rows => "7", :id => "reply-text-#{post_id}", :style=>"width: 98%; margin-bottom: 2px;" %>
       <% if @current_user.is_anonymous? %>
-      <div class="g-recaptcha" data-sitekey="<%= ENV['REACAPTCHA_SITE_KEY'] %>"></div>
+        <%= image_tag("/comment/captcha", alt: "captcha") %>
+        <%= text_field "comment", "captcha", :id => "reply-captcha-#{post_id}", :style=>"width: 98%; margin-bottom: 2px;" %>
       <% end %>
       <%= submit_tag t('.post') %>
       <!-- <%= submit_tag t('.bump') %> -->
@@ -22,10 +23,3 @@
 <!--    <p style="margin-top: 1em; font-style: italic;">[spoiler]Hide spoiler text like this[/spoiler] (<%= link_to t('.more'), help_path("comments") %>)</p> -->
   <% end %>
 </div>
-
-<script type="text/javascript" src="https://www.google.com/recaptcha/api.js"></script>
-<script type="text/javascript">
-  <%= avatar_init %>
-  InlineImage.init();
-</script>
-

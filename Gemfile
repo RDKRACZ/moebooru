@@ -59,3 +59,5 @@ gem "jbuilder", "~> 2.5" # Rails 5.2 default
 
 # Must be last.
 gem "rack-mini-profiler", :group => :development
+
+gem 'rmagick'

@@ -40,6 +40,7 @@ services:
     image: "postgres:9.6"
     restart: "unless-stopped"
     environment:
+      POSTGRES_HOST_AUTH_METHOD: "trust"
       POSTGRES_USER: "moedb"
       POSTGRES_PASSWORD: "moedb"
       POSTGRES_DB: "moedb"

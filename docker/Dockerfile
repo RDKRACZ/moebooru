@@ -19,6 +19,7 @@ RUN \
     netcat-openbsd \
     build-essential \
     libmagick++-dev \
+    ghostscript \
     jhead \
     libxslt1-dev \
     libyaml-dev \

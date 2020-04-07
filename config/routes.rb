@@ -50,6 +50,7 @@ Rails.application.routes.draw do
   match "comment/update(/:id)" => "comment#update", :via => [:post, :put]
   post "comment/create(.:format)"
   post "comment/mark_as_spam(/:id)" => "comment#mark_as_spam"
+  get "comment/captcha"
 
   # Dmail
   match "dmail(/inbox)" => "dmail#inbox", :via => [:post, :get]

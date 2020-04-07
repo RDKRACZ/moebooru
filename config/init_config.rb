@@ -122,7 +122,7 @@ CONFIG["member_post_limit"] = 16
 CONFIG["anonymous_post_limit"] = 32
 
 # Members cannot post more than X comments in an hour.
-CONFIG["member_comment_limit"] = 2
+CONFIG["member_comment_limit"] = 200
 
 # This sets the minimum and maximum value a user can record as a vote.
 CONFIG["vote_record_min"] = 0

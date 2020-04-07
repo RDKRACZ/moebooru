@@ -1,4 +1,4 @@
-<div class="overlay-notice-container" id="notice-container" style="display: none;">
+<div class="overlay-notice-container" id="notice-container">
   <table cellspacing=0 cellpadding=0> <tbody>
     <tr> <td>
       <div id="notice">
@@ -6,3 +6,11 @@
     </td> </tr>
   </tbody> </table>
 </div>
+<script type="text/javascript">
+    var text = Cookie.get("notice");
+    if (text) {
+      notice(text, true);
+      Cookie.remove("notice");
+    }
+</script>
+

@@ -1,4 +1,7 @@
 require 'net/http'
+require 'RMagick'
+
+include Magick
 
 class CommentController < ApplicationController
   layout "default"
@@ -9,10 +12,13 @@ class CommentController < ApplicationController
   helper :post
 
   def edit
+    captchaSet()
     @comment = Comment.find(params[:id])
   end
 
   def update
+    captchaSet()
+
     comment = Comment.find(params[:id])
     if @current_user.has_permission?(comment)
       comment.update_attributes(comment_params)
@@ -23,6 +29,8 @@ class CommentController < ApplicationController
   end
 
   def destroy
+    captchaSet()
+
     comment = Comment.find(params[:id])
     if @current_user.has_permission?(comment)
       comment.destroy
@@ -32,20 +40,38 @@ class CommentController < ApplicationController
     end
   end
 
+  def captcha
+    tmp_image = Image.new(80, 30) do |c|
+      c.background_color= "Transparent"
+    end
+    drawing = Draw.new
+    drawing.annotate(tmp_image, 0, 0, 0, 5, captchaGet()) { |txt|
+      txt.gravity = Magick::NorthGravity
+      txt.pointsize = 22
+      txt.fill = "#800000"
+      txt.font_family = 'helvetica'
+      txt.font_weight = Magick::BoldWeight
+    }
+    tmp_image.format = "gif"
+    response.headers['Last-Modified'] = Time.now.ctime.to_s
+    send_data tmp_image.to_blob, :type => 'image/gif', :disposition => 'inline'
+  end
+
   def create
     if @current_user.is_anonymous?
-       response = params['g-recaptcha-response']
-       uri = URI('https://www.google.com/recaptcha/api/siteverify')
-       res = Net::HTTP.post_form(uri, 'secret' => ENV['RECAPTCHA_SECRET_KEY'], 'response' => response, 'remoteip' => request.remote_ip)
-       if not JSON.parse(res.body)['success']
-         respond_to_error("CAPTCHA error", { :action => "index" }, :status => 401)
+       response = params.require(:comment)['captcha']
+       if response.downcase != captchaGet().downcase
+         respond_to_error("CAPTCHA error", { :controller => "post", :action => "show", :id => comment_params[:post_id]}, :status => 401) 
+         captchaSet()
          return
        end
     end
 
+    captchaSet()
+
     if @current_user.is_member_or_lower? && params[:commit] == "Post" && Comment.where(:user_id => @current_user.id).where('created_at > ?', 1.hour.ago).count >= CONFIG["member_comment_limit"]
       # TODO: move this to the model
-      respond_to_error("Hourly limit exceeded", { :action => "index" }, :status => 421)
+      respond_to_error("Hourly limit exceeded", { :controller => "post", :action => "show", :id => comment_params[:post_id]}, :status => 421)
       return
     end
 
@@ -57,7 +83,7 @@ class CommentController < ApplicationController
     end
 
     if comment.save
-      respond_to_success("Comment created", :action => "index")
+      respond_to_success("Comment created", :controller => "post", :action => "show", :id => comment.post_id)
     else
       respond_to_error(comment, :action => "index")
     end

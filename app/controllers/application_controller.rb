@@ -1,5 +1,6 @@
 # encoding: utf-8
 require "digest/md5"
+require "securerandom"
 
 class ApplicationController < ActionController::Base
   protect_from_forgery
@@ -158,6 +159,7 @@ class ApplicationController < ActionController::Base
         status = "424 Invalid Parameters"
       end
 
+      redirect_to_params[:notice] = "Error: #{obj}"
       respond_to do |fmt|
         fmt.html { redirect_to redirect_to_params, :notice => "Error: #{obj}" }
         fmt.json { render :json => extra_api_params.merge(:success => false, :reason => obj).to_json, :status => status }
@@ -184,6 +186,7 @@ class ApplicationController < ActionController::Base
 
   include LoginSystem
   include RespondToHelpers
+  include CaptchaHelper
   include CacheHelper
   include SessionsHelper
   # local_addresses.clear
@@ -193,6 +196,7 @@ class ApplicationController < ActionController::Base
   before_action :limit_api
   before_action :set_country
   before_action :check_ip_ban
+  before_action :prepare_cookies
   after_action :init_cookies
 
   protected :build_cache_key
@@ -220,8 +224,8 @@ class ApplicationController < ActionController::Base
 
   def save_tags_to_cookie
     if params[:tags] || (params[:post] && params[:post][:tags])
-      tags = TagAlias.to_aliased((params[:tags] || params[:post][:tags]).to_s.to_valid_utf8.downcase.split)
-      tags += cookies["recent_tags"].to_s.to_valid_utf8.downcase.split
+      tags = TagAlias.to_aliased((params[:tags] || params[:post][:tags]).to_s.dup.to_valid_utf8.downcase.split)
+      tags += cookies["recent_tags"].to_s.dup.to_valid_utf8.downcase.split
       cookies["recent_tags"] = tags.uniq.slice(0, 20).join(" ")
     end
   end
@@ -250,6 +254,12 @@ class ApplicationController < ActionController::Base
       end
     else
       yield
+    end
+  end
+
+  def prepare_cookies
+    if not request.cookies["part"]
+      cookies["part"] = SecureRandom.hex(16)
     end
   end
 
