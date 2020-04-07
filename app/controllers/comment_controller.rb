@@ -41,6 +41,7 @@ class CommentController < ApplicationController
   end
 
   def captcha
+    limit_resource('time', 3600)
     tmp_image = Image.new(80, 30) do |c|
       c.background_color= "Transparent"
     end
