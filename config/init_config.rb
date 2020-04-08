@@ -185,16 +185,19 @@ CONFIG["tag_types"] = {
   "Artist" => 1,
   "Copyright" => 3,
   "Character" => 4,
+  "Meta" => 5,
 
   "general" => 0,
   "artist" => 1,
   "copyright" => 3,
   "character" => 4,
+  "meta" => 5,
+
   "art" => 1,
   "copy" => 3,
   "char" => 4
 }
-CONFIG["tag_order"] = %w(artist copyright character general)
+CONFIG["tag_order"] = %w(artist copyright character general meta)
 
 # Tag type IDs to not list in recent tag summaries, such as on the side of post/index:
 CONFIG["exclude_from_tag_sidebar"] = [0]

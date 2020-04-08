@@ -582,6 +582,14 @@ ul.link-page > li {
   color: #b6b;
 }
 
+.tag-type-meta > a, #history .tag-type-meta, .color-tag-types .tag-type-meta {
+  color: #ff8800;
+}
+
+.tag-type-meta > a:hover {
+  color: #ff8800;
+}
+
 .upload-progress-bar
 {
   display: inline-block;
