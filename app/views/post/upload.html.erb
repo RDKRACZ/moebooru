@@ -83,13 +83,24 @@
           </tr>
           <tr>
             <th>
+              <label for="post_artist_commentary"><%= t('.form.artist_commentary._') %></label>
+              <% unless @current_user.is_privileged_or_higher? %>
+                <p><%= t('.form.artist_commentary.info') %></p>
+              <% end %>
+            </th>
+            <td>
+              <%= text_area "post", "artist_commentary", :value => params[:artist_commentary], :size => "50x2", :tabindex => 3 %>
+            </td>
+          </tr>
+          <tr>
+            <th>
               <label for="post_tags"><%= t('.form.tags._') %></label>
               <% unless @current_user.is_privileged_or_higher? %>
                 <p><%= t('.form.tags.info') %> (<%= link_to t('.form.help'), help_path("tags"), :target => "_blank" %>)</p>
               <% end %>
             </th>
             <td>
-              <%= text_area "post", "tags", :value => params[:tags], :size => "60x2", :tabindex => 3 %>
+              <%= text_area "post", "tags", :value => params[:tags], :size => "50x4", :tabindex => 3 %>
               <%= link_to t(".form.find_related.tags"), "#", :data => { :toggle => "related-tags", :type => "all" } %> |
               <%= link_to t(".form.find_related.artists"), "#", :data => { :toggle => "related-tags", :type => "artist" } %> |
               <%= link_to t(".form.find_related.characters"), "#", :data => { :toggle => "related-tags", :type => "char" } %> |

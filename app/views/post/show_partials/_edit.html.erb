@@ -58,6 +58,10 @@
           <th><label class="block" for="post_source"><%= t('.source') %></label></th>
           <td><%= text_field "post", "source", :size => 40, :tabindex => 9 %></td>
         </tr>
+        <tr>
+          <th><label class="block" for="post_artist_commentary"><%= t('.artist_commentary') %></label></th>
+          <td><%= text_area "post", "artist_commentary", :size => "50x2", :tabindex => 9 %></td>
+        </tr>
           <tr>
             <th>
               <label class="block" for="post_tags"><%= t('.tags') %></label>

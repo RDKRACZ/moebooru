@@ -280,6 +280,7 @@ en:
       posts: Posts
       ratings: Ratings
       source: Source Code
+      artist_commentary: Artist Commentary
       starting: Getting Started
       suggestions: Suggestions
       tag_aliases: Tag Aliases
@@ -337,6 +338,7 @@ en:
       remove_confirm: Remove this image?
       save: Save changes
       source: Source
+      artist_commentary: Artist Commentary
       tag: 'Inline tag: image #%{id}'
     footer:
       help: Help
@@ -679,6 +681,7 @@ en:
       score: Score
       shown_in_index: Shown in Index
       source: Source
+      artist_commentary: Artist Commentary
     delete:
       delete: Delete
       noaccess_info: (parent post hidden due to access restrictions)
@@ -781,6 +784,7 @@ en:
       data: Image data
       dimension: Dimension
       source: Source
+      artist_commentary: Artist Commentary
     posts:
       empty: Nobody here but us chickens!
     search:
@@ -814,6 +818,7 @@ en:
         save: Save changes
         shown_in_index: Shown in index
         source: Source
+        artist_commentary: Artist Commentary
         tags: Edit Tags
         tags_info_html: Separate tags with spaces (%{more})
       history_panel:
@@ -880,6 +885,7 @@ en:
         score: Score
         size: Size
         source: Source
+        artist_commentary: Artist Commentary
         title: Statistics
       status_notices:
         by: By
@@ -939,6 +945,7 @@ en:
       services: Services
       show_more: Show More
       source: Source
+      artist_commentary: Artist Commentary
       update: Update
       upload: Upload this image
       use_all_services: Use all services
@@ -969,6 +976,9 @@ en:
         source:
           _: Source
           info: You can enter a URL here to download from a website.
+        artist_commentary:
+          _: Artist Commentary
+          info: Artist's own commentary text
         tags:
           _: Tags
           info: Separate tags with spaces.

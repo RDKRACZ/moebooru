@@ -32,6 +32,11 @@
       <p><%= t('.download.info') %></p>
     <% end %>
   </div>
+  <% if not @post.artist_commentary.empty? %>
+  <div class="artist_commentary">
+    <%= format_inlines(format_text(@post.artist_commentary), @post.id) %>
+  </div>
+  <% end %>
   <div style="margin-bottom: 1em;">
     <p id="note-count"></p>
     <script type="text/javascript">
