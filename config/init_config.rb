@@ -1,6 +1,6 @@
 CONFIG = {}
 # The version of this Moebooru.
-CONFIG["version"] = "5.2.0"
+CONFIG["version"] = "6.0.0"
 
 # The default name to use for anyone who isn't logged in.
 CONFIG["default_guest_name"] = "Anonymous"
@@ -279,6 +279,9 @@ CONFIG["email_from"] ||= CONFIG["admin_contact"]
 
 # Set default locale.
 CONFIG["default_locale"] ||= "en"
+
+CONFIG["server_host"] ||= "localhost"
+CONFIG["app_name"] ||= "DAN_SITENAME"
 
 # Set default url_base if not set in local config.
 CONFIG["url_base"] ||= "http://#{CONFIG["server_host"] || "localhost"}"

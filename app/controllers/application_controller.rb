@@ -48,10 +48,6 @@ class ApplicationController < ActionController::Base
         @current_user = User.find_by_id(session[:user_id])
       end
 
-      if @current_user.nil? && cookies[:login] && cookies[:pass_hash]
-        @current_user = User.authenticate_hash(cookies[:login], cookies[:pass_hash])
-      end
-
       if @current_user.nil? && params[:login] && params[:password_hash]
         @current_user = User.authenticate_hash(params[:login], params[:password_hash])
       end
@@ -82,16 +78,6 @@ class ApplicationController < ActionController::Base
       ActiveRecord::Base.init_history
 
       @current_user.log(request.remote_ip) unless @current_user.is_anonymous?
-    end
-
-    def set_country
-      @current_user_country = Rails.cache.fetch({ :type => :geoip, :ip => request.remote_ip }, :expires_in => 1.month) do
-        begin
-          GeoIP.new(Rails.root.join("db", "GeoIP.dat").to_s).country(request.remote_ip).country_code2
-        rescue
-          "--"
-        end
-      end
     end
 
     CONFIG["user_levels"].each do |name, _value|
@@ -194,7 +180,6 @@ class ApplicationController < ActionController::Base
   before_action :set_current_user
   before_action :mini_profiler_check if Rails.env.development?
   before_action :limit_api
-  before_action :set_country
   before_action :check_ip_ban
   before_action :prepare_cookies
   after_action :init_cookies
@@ -271,8 +256,6 @@ class ApplicationController < ActionController::Base
                                          else
                                            @current_user.last_forum_topic_read_at || Time.at(0)
                                          end.to_json
-
-    cookies["country"] = @current_user_country
 
     if @current_user.is_anonymous?
       cookies.delete :user_info

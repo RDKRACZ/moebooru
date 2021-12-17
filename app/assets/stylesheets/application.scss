@@ -1,4 +1,5 @@
-//= require jquery-ui
+@import 'cropperjs/dist/cropper';
+@import 'jquery-ui-dist/jquery-ui';
 @import 'variables';
 @import 'components/*';
 @import "webtoolkit.clearfix";
@@ -9,6 +10,14 @@
 @import "pool";
 @import "profiler";
 @import "related_tags";
+
+html {
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+}
 
 body {
   word-wrap: break-word;
@@ -235,6 +244,10 @@ HTML.webkit input[type=file] {
   color: #800;
 }
 
+input[type=text], input[type=password] {
+  background: #fff;
+}
+
 input[type=password]:focus {
 }
 
@@ -301,10 +314,6 @@ span.plid {
 
 span.unread-topic {
   font-weight: bold;
-}
-
-span.stars .star {
-	font-family: "Zapf Dingbats", "Apple Symbols", sans-serif;	/* on OS X 10.4, different fonts are used as fallbacks for the full and empty star characters, so let's make sure we use a font that has them at the same size */
 }
 
 span.vote-desc {
@@ -410,6 +419,7 @@ textarea {
   padding: 0 0.3em;
   font-family: sans-serif;
   font-size: 1.2em;
+  background: #fff;
 }
 
 textarea.no-block {
@@ -1518,12 +1528,14 @@ img.service-icon#source {
 	display: inline;
 }
 
-span.stars .star-1 { color:#800; }
-span.stars .star-2 { color:#800; }
-span.stars .star-3 { color:#800; }
+.star {
+  &:focus {
+    outline: none;
+  }
 
-.star:focus {
-	outline: none;
+  &[data-star="1"] { color:#800; }
+  &[data-star="2"] { color:#800; }
+  &[data-star="3"] { color:#800; }
 }
 
 .standard-vote-widget .star-set-upto:after { content: "★"; }
@@ -1531,7 +1543,7 @@ span.stars .star-3 { color:#800; }
 .standard-vote-widget .star-hovered-upto:after { content: "★"; }
 .standard-vote-widget .star-hovered-after:after { content: "☆"; }
 
-.standard-vote-widget .star-0:after { content: "↶ "; }
+.standard-vote-widget [data-star="0"]:after { content: "↶ "; }
 .standard-vote-widget .star.vote-up:after { content: "vote up"; }
 
 .standard-vote-widget .vote-up-block:before { content: " ("; }
@@ -1574,7 +1586,6 @@ span.stars .star-3 { color:#800; }
 }
 
 .vote-popup-container .vote-desc { display: none; }
-.vote-popup-container .star:after { content: "★"; }
 .vote-popup-container .star-0:after { content: "↶"; }
 
 /* Zoom in the current vote, if any.  Use a transform for this so it doesn't

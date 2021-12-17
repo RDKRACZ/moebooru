@@ -126,7 +126,7 @@ CREATE FUNCTION public.nat_sort(t text) RETURNS text
     LANGUAGE plpgsql IMMUTABLE
     AS $$
       BEGIN
-        return array_to_string(array(select nat_sort_pad((regexp_matches(t, '([0-9]+|[^0-9]+)', 'g'))[1])), '');
+        return array_to_string(array(select public.nat_sort_pad((regexp_matches(t, '([0-9]+|[^0-9]+)', 'g'))[1])), '');
       END;
       $$;
 
@@ -316,8 +316,6 @@ CREATE FUNCTION public.user_logs_touch(new_user_id integer, new_ip inet) RETURNS
 
 
 SET default_tablespace = '';
-
-SET default_with_oids = false;
 
 --
 -- Name: advertisements; Type: TABLE; Schema: public; Owner: -
@@ -1250,18 +1248,6 @@ ALTER SEQUENCE public.post_votes_id_seq OWNED BY public.post_votes.id;
 
 
 --
--- Name: posts_id_seq2; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.posts_id_seq2
-    START WITH 7168
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
 -- Name: posts_tags; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1545,7 +1531,8 @@ CREATE TABLE public.users (
     secondary_languages text DEFAULT ''::text NOT NULL,
     pool_browse_mode integer DEFAULT 1 NOT NULL,
     use_browser boolean DEFAULT false NOT NULL,
-    api_key character varying(255)
+    api_key character varying(255),
+    name_normalized character varying(255) NOT NULL
 );
 
 
@@ -2509,6 +2496,13 @@ CREATE INDEX index_post_votes_on_user_id ON public.post_votes USING btree (user_
 
 
 --
+-- Name: index_post_votes_on_user_id_and_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_post_votes_on_user_id_and_id ON public.post_votes USING btree (user_id, id);
+
+
+--
 -- Name: index_posts_on_change_seq; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2614,6 +2608,13 @@ CREATE INDEX index_users_on_avatar_post_id ON public.users USING btree (avatar_p
 
 
 --
+-- Name: index_users_on_name_normalized; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_users_on_name_normalized ON public.users USING btree (name_normalized);
+
+
+--
 -- Name: notes_text_search_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2639,6 +2640,13 @@ CREATE INDEX pools_posts_post_id_idx ON public.pools_posts USING btree (post_id)
 --
 
 CREATE INDEX pools_user_id_idx ON public.pools USING btree (user_id);
+
+
+--
+-- Name: post_frames_for_warehouse; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX post_frames_for_warehouse ON public.posts USING btree (id) WHERE ((frames = frames_pending) AND (frames <> ''::text) AND (NOT frames_warehoused));
 
 
 --
@@ -2749,91 +2757,91 @@ CREATE RULE delete_histories AS
 -- Name: pools_posts pools_posts_delete_trg; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER pools_posts_delete_trg BEFORE DELETE ON public.pools_posts FOR EACH ROW EXECUTE PROCEDURE public.pools_posts_delete_trg();
+CREATE TRIGGER pools_posts_delete_trg BEFORE DELETE ON public.pools_posts FOR EACH ROW EXECUTE FUNCTION public.pools_posts_delete_trg();
 
 
 --
 -- Name: pools_posts pools_posts_insert_trg; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER pools_posts_insert_trg BEFORE INSERT ON public.pools_posts FOR EACH ROW EXECUTE PROCEDURE public.pools_posts_insert_trg();
+CREATE TRIGGER pools_posts_insert_trg BEFORE INSERT ON public.pools_posts FOR EACH ROW EXECUTE FUNCTION public.pools_posts_insert_trg();
 
 
 --
 -- Name: pools_posts pools_posts_update_trg; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER pools_posts_update_trg BEFORE UPDATE ON public.pools_posts FOR EACH ROW EXECUTE PROCEDURE public.pools_posts_update_trg();
+CREATE TRIGGER pools_posts_update_trg BEFORE UPDATE ON public.pools_posts FOR EACH ROW EXECUTE FUNCTION public.pools_posts_update_trg();
 
 
 --
 -- Name: posts posts_tags_array_update; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER posts_tags_array_update BEFORE INSERT OR UPDATE ON public.posts FOR EACH ROW EXECUTE PROCEDURE public.posts_tags_array_update();
+CREATE TRIGGER posts_tags_array_update BEFORE INSERT OR UPDATE ON public.posts FOR EACH ROW EXECUTE FUNCTION public.posts_tags_array_update();
 
 
 --
 -- Name: history_changes trg_cleanup_history; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_cleanup_history AFTER DELETE ON public.history_changes FOR EACH ROW EXECUTE PROCEDURE public.trg_purge_histories();
+CREATE TRIGGER trg_cleanup_history AFTER DELETE ON public.history_changes FOR EACH ROW EXECUTE FUNCTION public.trg_purge_histories();
 
 
 --
 -- Name: comments trg_comment_search_update; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_comment_search_update BEFORE INSERT OR UPDATE ON public.comments FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger('text_search_index', 'pg_catalog.english', 'body');
+CREATE TRIGGER trg_comment_search_update BEFORE INSERT OR UPDATE ON public.comments FOR EACH ROW EXECUTE FUNCTION tsvector_update_trigger('text_search_index', 'pg_catalog.english', 'body');
 
 
 --
 -- Name: forum_posts trg_forum_post_search_update; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_forum_post_search_update BEFORE INSERT OR UPDATE ON public.forum_posts FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger('text_search_index', 'pg_catalog.english', 'title', 'body');
+CREATE TRIGGER trg_forum_post_search_update BEFORE INSERT OR UPDATE ON public.forum_posts FOR EACH ROW EXECUTE FUNCTION tsvector_update_trigger('text_search_index', 'pg_catalog.english', 'title', 'body');
 
 
 --
 -- Name: history_changes trg_history_changes_value_index_update; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_history_changes_value_index_update BEFORE INSERT OR UPDATE ON public.history_changes FOR EACH ROW EXECUTE PROCEDURE public.history_changes_index_trigger();
+CREATE TRIGGER trg_history_changes_value_index_update BEFORE INSERT OR UPDATE ON public.history_changes FOR EACH ROW EXECUTE FUNCTION public.history_changes_index_trigger();
 
 
 --
 -- Name: notes trg_note_search_update; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_note_search_update BEFORE INSERT OR UPDATE ON public.notes FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger('text_search_index', 'pg_catalog.english', 'body');
+CREATE TRIGGER trg_note_search_update BEFORE INSERT OR UPDATE ON public.notes FOR EACH ROW EXECUTE FUNCTION tsvector_update_trigger('text_search_index', 'pg_catalog.english', 'body');
 
 
 --
 -- Name: pools trg_pools_search_update; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_pools_search_update BEFORE INSERT OR UPDATE ON public.pools FOR EACH ROW EXECUTE PROCEDURE public.pools_search_update_trigger();
+CREATE TRIGGER trg_pools_search_update BEFORE INSERT OR UPDATE ON public.pools FOR EACH ROW EXECUTE FUNCTION public.pools_search_update_trigger();
 
 
 --
 -- Name: posts_tags trg_posts_tags__delete; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_posts_tags__delete BEFORE DELETE ON public.posts_tags FOR EACH ROW EXECUTE PROCEDURE public.trg_posts_tags__delete();
+CREATE TRIGGER trg_posts_tags__delete BEFORE DELETE ON public.posts_tags FOR EACH ROW EXECUTE FUNCTION public.trg_posts_tags__delete();
 
 
 --
 -- Name: posts_tags trg_posts_tags__insert; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_posts_tags__insert BEFORE INSERT ON public.posts_tags FOR EACH ROW EXECUTE PROCEDURE public.trg_posts_tags__insert();
+CREATE TRIGGER trg_posts_tags__insert BEFORE INSERT ON public.posts_tags FOR EACH ROW EXECUTE FUNCTION public.trg_posts_tags__insert();
 
 
 --
 -- Name: wiki_pages trg_wiki_page_search_update; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_wiki_page_search_update BEFORE INSERT OR UPDATE ON public.wiki_pages FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger('text_search_index', 'pg_catalog.english', 'title', 'body');
+CREATE TRIGGER trg_wiki_page_search_update BEFORE INSERT OR UPDATE ON public.wiki_pages FOR EACH ROW EXECUTE FUNCTION tsvector_update_trigger('text_search_index', 'pg_catalog.english', 'title', 'body');
 
 
 --
@@ -3398,6 +3406,12 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20160329161636'),
 ('20160330063707'),
 ('20180624074601'),
+('20190518111956'),
+('20190817070727'),
+('20191110172526'),
+('20200908180652'),
+('20201103140508'),
+('20210211213304'),
 ('21'),
 ('22'),
 ('23'),
