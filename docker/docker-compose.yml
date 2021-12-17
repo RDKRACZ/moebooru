@@ -1,7 +1,7 @@
 version: '3.5'
 services:
   moebooru:
-    image: "moebooru:latest"
+    image: "eientei/moebooru:cookiewiki-branding"
     restart: "unless-stopped"
     depends_on:
       - postgres
