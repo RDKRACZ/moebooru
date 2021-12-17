@@ -13,7 +13,7 @@ services:
       - "5566"
     volumes:
       - "./data-moebooru:/moebooru/public/data"
-      - "./config-moebooru:/moebooru/config"
+      - "../config:/moebooru/config"
     environment:
       MB_ADMIN_CONTACT: "iamtakingiteasy@eientei.org"
       MB_DATABASE_URL: "postgres://moedb:moedb@postgres:5432/moedb"
@@ -25,6 +25,7 @@ services:
       MAGICK_MEMORY_LIMIT: "512Mib"
       MAGICK_MAP_LIMIT: "256MiB"
       MAGICK_TIME_LIMIT: "30"
+      # probably you don't want that in production
       RAILS_SERVE_STATIC_FILES: "1"
     entrypoint:
       - "sh"
