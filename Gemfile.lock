@@ -181,6 +181,7 @@ GEM
       thor (~> 1.0)
     raindrops (0.19.2)
     rake (13.0.6)
+    rmagick (4.2.3)
     sass-rails (6.0.0)
       sassc-rails (~> 2.1, >= 2.1.1)
     sassc (2.4.0)
@@ -257,6 +258,7 @@ DEPENDENCIES
   rails (~> 6.1.0)
   rails-controller-testing
   rails-i18n
+  rmagick
   sass-rails
   sitemap_generator
   uglifier

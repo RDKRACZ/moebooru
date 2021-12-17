@@ -16,15 +16,6 @@
       <h4><%= t('.guidelines.title') %></h4>
       <p><%= t('.guidelines.info') %></p>
       <ul>
-        <li>
-          <%= t('.guidelines.do_not.tags_html', :tags => %w[furry yaoi guro toon poorly_drawn].map { |t| link_to(t.humanize.downcase, :controller => '/wiki', :action => :show, :title => t) }.to_sentence(:last_word_connector => t('.guidelines.last_word_connector_or')).html_safe) %>
-        </li>
-        <li>
-          <%= t('.guidelines.do_not.with_html', :with => link_to(t('.guidelines.do_not.compression_artifacts'), :controller => '/wiki', :action => :show, :title => 'compression_artifacts')) %>
-        </li>
-        <li>
-          <%= t('.guidelines.do_not.with_html', :with => link_to(t('.guidelines.do_not.obnoxious_watermarks'), :controller => '/wiki', :action => :show, :title => 'watermark')) %>
-        </li>
         <li><%= link_to t('.guidelines.group'), help_path("post_relationships") %></li>
         <li><%= t('.guidelines.more_html', :more_link => link_to(t('.guidelines.more_link'), help_path("tags"))) %></li>
       </ul>

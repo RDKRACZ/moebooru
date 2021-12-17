@@ -1,6 +1,6 @@
 FROM eientei/iqdb:latest as iqdb
 FROM eientei/iqdb-query:latest as iqdb-query
-FROM ruby:2.5-stretch
+FROM ruby:2.6-buster
 ENV \
   MB_DATABASE_URL=postgres://user:pass@somehost:5432/dbname \
   MB_MEMCACHE_SERVERS=somehost:11211 \
@@ -26,14 +26,17 @@ RUN \
     libssl-dev \
     libpcre3-dev \
     libpq-dev \
-    postgresql-server-dev-9.6 \
-    postgresql-client-9.6 \
-    libreadline-dev && \
-  apt-get install -y \
-    libssl1.0-dev \
-    nodejs-dev
+    postgresql-server-dev-11 \
+    postgresql-client-11 \
+    libreadline-dev \
+    yarnpkg \
+    libssl-dev \
+    nodejs
+RUN ln -s /usr/bin/yarnpkg /usr/bin/yarn
+RUN yarn install
 COPY . /moebooru
 RUN cd /moebooru && \
+  gem install bundler:2.1.4 && \
   bundle install && \
   mv config config_tmpl && \
   mkdir -p config

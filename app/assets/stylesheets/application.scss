@@ -187,7 +187,7 @@ div#title {
 }
 h2 img#logo {
   float: left;
-  padding-left: 35px;
+  margin-left: 35px;
 }
 
 h2#site-title span {
@@ -439,6 +439,8 @@ ul.bare-list li {
 
 /* This is !important to override things like ul#subnavbar li. */
 .hide-advanced-editing .advanced-editing { display: none !important; }
+
+#add-to-pool { display: initial !important; }
 
 #main-menu .menu {
   display: inline;
