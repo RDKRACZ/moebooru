@@ -1106,7 +1106,8 @@ CREATE TABLE public.posts (
     frames_warehoused boolean DEFAULT false NOT NULL,
     updated_at timestamp with time zone,
     tags_array character varying[],
-    artist_commentary character varying DEFAULT ''::character varying
+    artist_commentary character varying DEFAULT ''::character varying,
+    artist_commentary_translated character varying DEFAULT ''::character varying
 );
 
 
@@ -3403,6 +3404,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20201103140508'),
 ('20210211213304'),
 ('20211217233407'),
+('20211218012532'),
 ('21'),
 ('22'),
 ('23'),

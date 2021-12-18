@@ -735,7 +735,7 @@ window.Post =
     old = $('creator-id-css')
     if old
       old.parentNode.removeChild old
-    css = '.creator-id-' + creator_id + ' .directlink { background-color: #300 !important; }'
+    css = '.creator-id-' + creator_id + ' .directlink { background-color: #300 !important; } .creator-id-' + creator_id + ' .directlink-res { color: #ffe !important; }'
     style = document.createElement('style')
     style.id = 'creator-id-css'
     style.type = 'text/css'

@@ -59,8 +59,15 @@
           <td><%= text_field "post", "source", :size => 40, :tabindex => 9 %></td>
         </tr>
         <tr>
-          <th><label class="block" for="post_artist_commentary"><%= t('.artist_commentary') %></label></th>
-          <td><%= text_area "post", "artist_commentary", :size => "50x2", :tabindex => 9 %></td>
+          <th><label class="block" for="artist_commentary_wrapper"><%= t('.artist_commentary') %></label></th>
+          <td>
+            <div class="artist_commentary_wrapper_edit" id="artist_commentary_wrapper">
+              <div><a href="#original">Original</a> | <a href="#translated">Translated</a></div>
+              <%= text_area "post", "artist_commentary", :size => "50x2", :tabindex => 9, :class => "artist_commentary" %>
+              <%= text_area "post", "artist_commentary_translated", :size => "50x2", :tabindex => 9, :style => "display: none;", :class => "artist_commentary_translated" %>
+            </div>
+          </td>
+        </tr>
         </tr>
           <tr>
             <th>
@@ -90,4 +97,8 @@
       <div style="margin-bottom: 1em;" id="related"><em><%= t('.related.none') %></em></div>
     </div>
   <% end %>
+<%= render :partial => "post/artist_commentary_script" %>
+<script type="text/javascript">
+setup_artist_commentary_callbacks('.artist_commentary_wrapper_edit ')
+</script>
 </div>

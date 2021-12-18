@@ -89,7 +89,11 @@
               <% end %>
             </th>
             <td>
-              <%= text_area "post", "artist_commentary", :value => params[:artist_commentary], :size => "50x2", :tabindex => 3 %>
+              <div class="artist_commentary_wrapper_edit">
+                <div><a href="#original">Original</a> | <a href="#translated">Translated</a></div>
+                <%= text_area "post", "artist_commentary", :value => params[:artist_commentary], :size => "50x2", :tabindex => 3, :class => "artist_commentary" %>
+                <%= text_area "post", "artist_commentary_translated", :value => params[:artist_commentary_translated], :size => "50x2", :tabindex => 3, :style => "display: none;", :class => "artist_commentary_translated" %>
+              </div>
             </td>
           </tr>
           <tr>
@@ -176,5 +180,11 @@
   if(TagCompletion)
     TagCompletion.observe_tag_changes_on_submit($("edit-form"), $("post_tags"), null);
 </script>
+
+<%= render :partial => "post/artist_commentary_script" %>
+<script type="text/javascript">
+setup_artist_commentary_callbacks('.artist_commentary_wrapper_edit ')
+</script>
+
 
 <%= render :partial => "footer" %>

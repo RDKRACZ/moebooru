@@ -33,9 +33,23 @@
     <% end %>
   </div>
   <% if not @post.artist_commentary.empty? %>
-  <div class="artist_commentary">
-    <%= format_inlines(format_text(@post.artist_commentary), @post.id) %>
+  <div class="artist_commentary_wrapper">
+    <% if @post.artist_commentary_translated.empty? %>
+    <div><strong>Original</strong></div>
+    <% else %>
+    <div><a href="#original">Original</a> | <a href="#translated">Translated</a></div>
+    <% end %>
+    <div class="artist_commentary">
+      <%= format_inlines(format_text(@post.artist_commentary), @post.id) %>
+    </div>
+    <div class="artist_commentary_translated" style="display: none;">
+      <%= format_inlines(format_text(@post.artist_commentary_translated), @post.id) %>
+    </div>
   </div>
+  <%= render :partial => "post/artist_commentary_script" %>
+  <script type="text/javascript">
+  setup_artist_commentary_callbacks('.artist_commentary_wrapper ')
+  </script>
   <% end %>
   <div style="margin-bottom: 1em;">
     <p id="note-count"></p>

@@ -42,14 +42,6 @@ export default class InputHandler
     grave_keycode = if Prototype.Browser.WebKit then 192 else 96
     if key == 32
       document.fire 'viewer:set-thumb-bar', toggle: true
-    else if key == 49
-      document.fire 'viewer:vote', score: 1
-    else if key == 50
-      document.fire 'viewer:vote', score: 2
-    else if key == 51
-      document.fire 'viewer:vote', score: 3
-    else if key == grave_keycode
-      document.fire 'viewer:vote', score: 0
     else if key == 65 or key == 97
       document.fire 'viewer:show-next-post', prev: true
     else if key == 69 or key == 101

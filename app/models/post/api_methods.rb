@@ -13,6 +13,7 @@ module Post::ApiMethods
       :change => change_seq,
       :source => source,
       :artist_commentary => artist_commentary,
+      :artist_commentary_translated => artist_commentary_translated,
       :score => score,
       :md5 => md5,
       :file_size => file_size,

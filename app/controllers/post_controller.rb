@@ -856,7 +856,7 @@ class PostController < ApplicationController
   end
 
   def post_params_for_create
-    params.require(:post).permit(:file, :source, :parent_id, :rating, :tags, :is_held, :artist_commentary)
+    params.require(:post).permit(:file, :source, :parent_id, :rating, :tags, :is_held, :artist_commentary, :artist_commentary_translated)
   end
 
   def post_params_for_update
@@ -864,6 +864,6 @@ class PostController < ApplicationController
   end
 
   def post_params_for_update_single(p)
-    p.permit(:source, :parent_id, :rating, :tags, :old_tags, :is_held, :is_shown_in_index, :is_note_locked, :is_rating_locked, :frames_pending_string, :artist_commentary)
+    p.permit(:source, :parent_id, :rating, :tags, :old_tags, :is_held, :is_shown_in_index, :is_note_locked, :is_rating_locked, :frames_pending_string, :artist_commentary, :artist_commentary_translated)
   end
 end
