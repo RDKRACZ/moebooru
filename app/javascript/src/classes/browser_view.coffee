@@ -239,7 +239,7 @@ export default class BrowserView
       @set_post_info()
 
     @vote_widget = new Vote(jQuery(@container.down('.vote-container'), null))
-    @vote_widget.initShortcut()
+    #@vote_widget.initShortcut()
     @blacklist_override_post_id = null
 
     @container.down('.show-blacklisted').on 'click', (e) =>
@@ -280,7 +280,7 @@ export default class BrowserView
     popup_vote_widget_container = @container.down('.vote-popup-container')
     popup_vote_widget_container.show()
     @popup_vote_widget = new Vote(jQuery(popup_vote_widget_container), null)
-    @popup_vote_widget.initShortcut()
+    #@popup_vote_widget.initShortcut()
     flash = @container.down('.vote-popup-flash')
 
     # vote-popup-expand is the part that's always present and is clicked to display the

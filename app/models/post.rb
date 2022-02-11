@@ -223,7 +223,7 @@ class Post < ApplicationRecord
   end
 
   def service_icon
-    "/favicon.ico"
+    "/favicon.png"
   end
 
   def self.refresh_tags_array
