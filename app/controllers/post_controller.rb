@@ -1,5 +1,3 @@
-require "download"
-
 class PostController < ApplicationController
   layout "default"
   helper :avatar
@@ -133,8 +131,9 @@ class PostController < ApplicationController
       end
     else
       if params[:query]
-        @pending_posts = Post.find_by_sql(Post.generate_sql(params[:query], :pending => true, :order => "id desc"))
-        @flagged_posts = Post.find_by_sql(Post.generate_sql(params[:query], :flagged => true, :order => "id desc"))
+        query = "#{params[:query]} holds:all order:id_desc"
+        @pending_posts = Post.find_by_sql(Post.generate_sql(query, :pending => true))
+        @flagged_posts = Post.find_by_sql(Post.generate_sql(query, :flagged => true))
       else
         @pending_posts = Post.where(:status => "pending").order(:id => :desc)
         @flagged_posts = Post.where(:status => "flagged").order(:id => :desc)
@@ -153,7 +152,7 @@ class PostController < ApplicationController
 
     user_id = @current_user.id
 
-    if @post.update_attributes(post_params_for_update.merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip))
+    if @post.update(post_params_for_update.merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip))
       # Reload the post to send the new status back; not all changes will be reflected in
       # @post due to after_save changes.
       @post.reload
@@ -190,7 +189,7 @@ class PostController < ApplicationController
 
       old_parent_id = @post.parent_id
 
-      if @post.update_attributes(post_params_for_update_single(post).merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip))
+      if @post.update(post_params_for_update_single(post).merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip))
         # Reload the post to send the new status back; not all changes will be reflected in
         # @post due to after_save changes.
         @post.reload
@@ -251,7 +250,7 @@ class PostController < ApplicationController
 
   def deleted_index
     if !@current_user.is_anonymous? && params[:user_id] && params[:user_id].to_i == @current_user.id
-      @current_user.update_attribute(:last_deleted_post_seen_at, Time.now)
+      @current_user.update(:last_deleted_post_seen_at => Time.now)
     end
 
     @posts = Post
@@ -264,7 +263,7 @@ class PostController < ApplicationController
   end
 
   def acknowledge_new_deleted_posts
-    @current_user.update_attribute(:last_deleted_post_seen_at, Time.now) unless @current_user.is_anonymous?
+    @current_user.update(:last_deleted_post_seen_at => Time.now) unless @current_user.is_anonymous?
     respond_to_success("Success", {})
   end
 
@@ -330,6 +329,7 @@ class PostController < ApplicationController
 
     @showing_holds_only = q.key?(:show_holds) && q[:show_holds] == :only
     results = Post.find_by_sql(Post.generate_sql(q, :original_query => tags, :from_api => from_api, :order => "p.id DESC", :offset => offset, :limit => posts_to_load))
+    ActiveRecord::Associations::Preloader.new.preload(results, :user)
 
     @preload = []
     unless from_api
@@ -497,7 +497,7 @@ class PostController < ApplicationController
   def revert_tags
     user_id = @current_user.id
     @post = Post.find(params[:id])
-    @post.update_attributes(:tags => PostTagHistory.find(params[:history_id].to_i).tags, :updater_user_id => user_id, :updater_ip_addr => request.remote_ip)
+    @post.update(:tags => PostTagHistory.find(params[:history_id].to_i).tags, :updater_user_id => user_id, :updater_ip_addr => request.remote_ip)
 
     respond_to_success("Tags reverted", :action => "show", :id => @post.id, :tag_title => @post.tag_title)
   end
@@ -585,7 +585,7 @@ class PostController < ApplicationController
 
   def similar
     @params = params
-    if params[:file].blank? then params.delete(:file) end
+    unless params[:file].is_a?(ActionDispatch::Http::UploadedFile) then params.delete(:file) end
     if params[:url].blank? then params.delete(:url) end
     if params[:id].blank? then params.delete(:id) end
     if params[:search_id].blank? then params.delete(:search_id) end
@@ -856,7 +856,7 @@ class PostController < ApplicationController
   end
 
   def post_params_for_create
-    params.require(:post).permit(:file, :source, :parent_id, :rating, :tags, :is_held)
+    params.require(:post).permit(:file, :source, :parent_id, :rating, :tags, :is_held, :artist_commentary, :artist_commentary_translated)
   end
 
   def post_params_for_update
@@ -864,6 +864,6 @@ class PostController < ApplicationController
   end
 
   def post_params_for_update_single(p)
-    p.permit(:source, :parent_id, :rating, :tags, :old_tags, :is_held, :is_shown_in_index, :is_note_locked, :is_rating_locked, :frames_pending_string)
+    p.permit(:source, :parent_id, :rating, :tags, :old_tags, :is_held, :is_shown_in_index, :is_note_locked, :is_rating_locked, :frames_pending_string, :artist_commentary, :artist_commentary_translated)
   end
 end

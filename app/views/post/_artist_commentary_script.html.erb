@@ -1,0 +1,17 @@
+<script type="text/javascript">
+setup_artist_commentary_callbacks = (parent) => ((swap_elems) => {
+  document.querySelectorAll(parent + 'a[href="#original"]').forEach(x => 
+    x.addEventListener('click', (e) => { 
+      e.preventDefault();
+      swap_elems(parent + '.artist_commentary', parent + '.artist_commentary_translated');
+    }))
+  document.querySelectorAll(parent + 'a[href="#translated"]').forEach(x => 
+    x.addEventListener('click', (e) => {
+      e.preventDefault();
+      swap_elems(parent + '.artist_commentary_translated', parent + '.artist_commentary');
+    }))
+})(((show, hide) => {
+  document.querySelectorAll(show).forEach(x => x.style = '');
+  document.querySelectorAll(hide).forEach(x => x.style = 'display: none;');
+}));
+</script>

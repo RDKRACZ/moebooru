@@ -1,3 +1,47 @@
-FROM eientei/moebooru:iichan-branding
-ADD https://cookiewiki.org/images/0/07/Cookiewiki_logo.png /moebooru/app/assets/images/logo.png
-RUN convert /moebooru/app/assets/images/logo.png -resize 75x75 /moebooru/app/assets/images/logo_small.png
+FROM eientei/iqdb:latest as iqdb
+FROM eientei/iqdb-query:latest as iqdb-query
+FROM ruby:2.6-buster
+ENV \
+  MB_DATABASE_URL=postgres://user:pass@somehost:5432/dbname \
+  MB_MEMCACHE_SERVERS=somehost:11211 \
+  MB_APP_NAME=iibooru \
+  MB_HOST_NAME=localhost \
+  MB_URL_BASE=http://127.0.0.1:8080 \
+  MB_ADMIN_CONTACT=foobar@example.com \
+  MB_IQDB_XML_URL=http://iqdb:8080/iqdb-xml.php \
+  LISTEN_ADDR=:8082 \
+  IQDB_ADDR=127.0.0.1:5566 \
+  SERVICE_NAME=iibooru
+RUN \
+  cd / && \
+  apt-get update && \
+  apt-get install -y \
+    netcat-openbsd \
+    build-essential \
+    libmagick++-dev \
+    ghostscript \
+    jhead \
+    libxslt1-dev \
+    libyaml-dev \
+    libssl-dev \
+    libpcre3-dev \
+    libpq-dev \
+    postgresql-server-dev-11 \
+    postgresql-client-11 \
+    libreadline-dev \
+    yarnpkg \
+    libssl-dev \
+    nodejs
+RUN ln -s /usr/bin/yarnpkg /usr/bin/yarn
+RUN yarn install
+COPY . /moebooru
+RUN cd /moebooru && \
+  gem install bundler:2.1.4 && \
+  bundle install && \
+  mv config config_tmpl && \
+  mkdir -p config
+COPY --from=iqdb /iqdb /
+COPY --from=iqdb-query /iqdb-query /
+COPY ./docker/entrypoint.sh /
+COPY ./docker/iqdb-script.sh /
+ENTRYPOINT ["/entrypoint.sh"]

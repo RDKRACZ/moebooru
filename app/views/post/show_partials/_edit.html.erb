@@ -19,12 +19,20 @@
             <% if @post.is_rating_locked? %>
               <%= t('.rating_locked_info') %>
             <% else %>
-              <%= radio_button_tag "post[rating]", "Explicit", @post.rating == "e", :id => "post_rating_explicit", :tabindex => 1 %>
-              <label for="post_rating_explicit"><%= t('ratings.e') %></label>
-              <%= radio_button_tag "post[rating]", "Questionable", @post.rating == "q", :id => "post_rating_questionable", :tabindex => 2 %>
-              <label for="post_rating_questionable"><%= t('ratings.q') %></label>
-              <%= radio_button_tag "post[rating]", "Safe", @post.rating == "s", :id => "post_rating_safe", :tabindex => 3 %>
-              <label for="post_rating_safe"><%= t('ratings.s') %></label>
+              <label>
+                <%= radio_button_tag "post[rating]", "Explicit", @post.rating == "e", :id => "post_rating_explicit", :tabindex => 1 %>
+                <%= t('ratings.e') %>
+              </label>
+
+              <label>
+                <%= radio_button_tag "post[rating]", "Questionable", @post.rating == "q", :id => "post_rating_questionable", :tabindex => 2 %>
+                <%= t('ratings.q') %>
+              </label>
+
+              <label>
+                <%= radio_button_tag "post[rating]", "Safe", @post.rating == "s", :id => "post_rating_safe", :tabindex => 3 %>
+                <%= t('ratings.s') %>
+              </label>
             <% end %>
           </td>
         </tr>
@@ -49,6 +57,17 @@
         <tr>
           <th><label class="block" for="post_source"><%= t('.source') %></label></th>
           <td><%= text_field "post", "source", :size => 40, :tabindex => 9 %></td>
+        </tr>
+        <tr>
+          <th><label class="block" for="artist_commentary_wrapper"><%= t('.artist_commentary') %></label></th>
+          <td>
+            <div class="artist_commentary_wrapper_edit" id="artist_commentary_wrapper">
+              <div><a href="#original">Original</a> | <a href="#translated">Translated</a></div>
+              <%= text_area "post", "artist_commentary", :size => "50x2", :tabindex => 9, :class => "artist_commentary" %>
+              <%= text_area "post", "artist_commentary_translated", :size => "50x2", :tabindex => 9, :style => "display: none;", :class => "artist_commentary_translated" %>
+            </div>
+          </td>
+        </tr>
         </tr>
           <tr>
             <th>
@@ -78,4 +97,8 @@
       <div style="margin-bottom: 1em;" id="related"><em><%= t('.related.none') %></em></div>
     </div>
   <% end %>
+<%= render :partial => "post/artist_commentary_script" %>
+<script type="text/javascript">
+setup_artist_commentary_callbacks('.artist_commentary_wrapper_edit ')
+</script>
 </div>

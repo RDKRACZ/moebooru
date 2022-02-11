@@ -1,7 +1,7 @@
 version: '3.5'
 services:
   moebooru:
-    image: "moebooru:latest"
+    image: "eientei/moebooru:iichan-branding"
     restart: "unless-stopped"
     depends_on:
       - postgres
@@ -13,12 +13,20 @@ services:
       - "5566"
     volumes:
       - "./data-moebooru:/moebooru/public/data"
+      - "../config:/moebooru/config"
     environment:
+      MB_ADMIN_CONTACT: "iamtakingiteasy@eientei.org"
       MB_DATABASE_URL: "postgres://moedb:moedb@postgres:5432/moedb"
       MB_MEMCACHE_SERVERS: "memcached:11211"
       MB_HOST_NAME: "localhost"
-      MB_URL_BASE: "http://127.0.0.1:8080"
+      MB_URL_BASE: "http://localhost:8080"
       MATCH_TRESHOLD: "60"
+      RAILS_ENV: "production"
+      MAGICK_MEMORY_LIMIT: "512Mib"
+      MAGICK_MAP_LIMIT: "256MiB"
+      MAGICK_TIME_LIMIT: "30"
+      # probably you don't want that in production
+      RAILS_SERVE_STATIC_FILES: "1"
     entrypoint:
       - "sh"
       - "-c"
@@ -28,16 +36,42 @@ services:
           sleep 1
           echo -n "."
         done
-        echo ""
         echo "waiting for memcached..."
         while ! nc -z memcached 11211; do
           sleep 1
           echo -n "."
         done
         echo ""
-        exec /entrypoint.sh
+        cat > /etc/ImageMagick-6/policy.xml <<EOF
+        <policymap>
+          <policy domain="resource" name="memory" value="2GiB"/>
+          <policy domain="resource" name="map" value="2GiB"/>
+          <policy domain="resource" name="width" value="16KP"/>
+          <policy domain="resource" name="height" value="16KP"/>
+          <policy domain="resource" name="area" value="2GiB"/>
+          <policy domain="resource" name="disk" value="2GiB"/>
+          <policy domain="resource" name="time" value="3600"/>
+          <policy domain="delegate" rights="none" pattern="URL" />
+          <policy domain="delegate" rights="none" pattern="HTTPS" />
+          <policy domain="delegate" rights="none" pattern="HTTP" />
+          <policy domain="path" rights="none" pattern="@*"/>
+          <policy domain="cache" name="shared-secret" value="passphrase" stealth="true"/>
+        </policymap>
+        EOF
+        cd /moebooru
+        /iqdb-query &
+        /iqdb listen 0.0.0.0:5566 public/data/iq.db &
+        tables="$$(psql "$$MB_DATABASE_URL" -Aqtc "select count(*) from information_schema.tables where table_schema = 'public';")"
+        if [ -z "$$tables" ] || [ "$$tables" -eq 0 ]; then
+          bundle exec rake db:reset || true
+        fi
+        bundle exec rake db:migrate
+        #        bundle exec rake assets:clobber
+        bundle exec rake assets:precompile
+        bundle exec rake job:start &
+        bundle exec unicorn -E production
   postgres:
-    image: "postgres:9.6"
+    image: "postgres:11"
     restart: "unless-stopped"
     environment:
       POSTGRES_HOST_AUTH_METHOD: "trust"

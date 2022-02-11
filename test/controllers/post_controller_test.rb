@@ -8,7 +8,7 @@ class PostControllerTest < ActionController::TestCase
   end
 
   def update_post(post, params = {})
-    post.update_attributes({ :updater_user_id => 1, :updater_ip_addr => "127.0.0.1" }.merge(params))
+    post.update({ :updater_user_id => 1, :updater_ip_addr => "127.0.0.1" }.merge(params))
   end
 
   def create_default_posts
@@ -23,7 +23,7 @@ class PostControllerTest < ActionController::TestCase
     get :upload, :session => { :user_id => 3 }
     assert_response :success
 
-    post :create, :params => { :post => { :source => "", :file => fixture_file_upload("../mocks/test/test1.jpg"), :tags => "hoge", :rating => "Safe" } }
+    post :create, :params => { :post => { :source => "", :file => fixture_file_upload("../../mocks/test/test1.jpg"), :tags => "hoge", :rating => "Safe" } }
     p = Post.last
     assert_equal("hoge", p.cached_tags)
     assert_equal("jpg", p.file_ext)

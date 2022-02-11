@@ -16,15 +16,6 @@
       <h4><%= t('.guidelines.title') %></h4>
       <p><%= t('.guidelines.info') %></p>
       <ul>
-        <li>
-          <%= t('.guidelines.do_not.tags_html', :tags => %w[furry yaoi guro toon poorly_drawn].map { |t| link_to(t.humanize.downcase, :controller => '/wiki', :action => :show, :title => t) }.to_sentence(:last_word_connector => t('.guidelines.last_word_connector_or')).html_safe) %>
-        </li>
-        <li>
-          <%= t('.guidelines.do_not.with_html', :with => link_to(t('.guidelines.do_not.compression_artifacts'), :controller => '/wiki', :action => :show, :title => 'compression_artifacts')) %>
-        </li>
-        <li>
-          <%= t('.guidelines.do_not.with_html', :with => link_to(t('.guidelines.do_not.obnoxious_watermarks'), :controller => '/wiki', :action => :show, :title => 'watermark')) %>
-        </li>
         <li><%= link_to t('.guidelines.group'), help_path("post_relationships") %></li>
         <li><%= t('.guidelines.more_html', :more_link => link_to(t('.guidelines.more_link'), help_path("tags"))) %></li>
       </ul>
@@ -92,13 +83,28 @@
           </tr>
           <tr>
             <th>
+              <label for="post_artist_commentary"><%= t('.form.artist_commentary._') %></label>
+              <% unless @current_user.is_privileged_or_higher? %>
+                <p><%= t('.form.artist_commentary.info') %></p>
+              <% end %>
+            </th>
+            <td>
+              <div class="artist_commentary_wrapper_edit">
+                <div><a href="#original">Original</a> | <a href="#translated">Translated</a></div>
+                <%= text_area "post", "artist_commentary", :value => params[:artist_commentary], :size => "50x2", :tabindex => 3, :class => "artist_commentary" %>
+                <%= text_area "post", "artist_commentary_translated", :value => params[:artist_commentary_translated], :size => "50x2", :tabindex => 3, :style => "display: none;", :class => "artist_commentary_translated" %>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <th>
               <label for="post_tags"><%= t('.form.tags._') %></label>
               <% unless @current_user.is_privileged_or_higher? %>
                 <p><%= t('.form.tags.info') %> (<%= link_to t('.form.help'), help_path("tags"), :target => "_blank" %>)</p>
               <% end %>
             </th>
             <td>
-              <%= text_area "post", "tags", :value => params[:tags], :size => "60x2", :tabindex => 3 %>
+              <%= text_area "post", "tags", :value => params[:tags], :size => "50x4", :tabindex => 3 %>
               <%= link_to t(".form.find_related.tags"), "#", :data => { :toggle => "related-tags", :type => "all" } %> |
               <%= link_to t(".form.find_related.artists"), "#", :data => { :toggle => "related-tags", :type => "artist" } %> |
               <%= link_to t(".form.find_related.characters"), "#", :data => { :toggle => "related-tags", :type => "char" } %> |
@@ -118,14 +124,20 @@
               <% end %>
             </th>
             <td>
-              <input id="post_rating_explicit" name="post[rating]" type="radio" value="Explicit" <% if (params[:rating] or "q") == "e" %>checked="checked"<% end %> tabindex="5">
-              <label for="post_rating_explicit"><%= t('ratings.e') %></label>
+              <label>
+                <%= radio_button_tag "post[rating]", "Explicit", params[:rating] == "e", :id => "post_rating_explicit", :tabindex => 5 %>
+                <%= t('ratings.e') %>
+              </label>
 
-              <input id="post_rating_questionable" name="post[rating]" type="radio" value="Questionable" <% if (params[:rating] or "q") == "q" %>checked="checked"<% end %> tabindex="6">
-              <label for="post_rating_questionable"><%= t('ratings.q') %></label>
+              <label>
+                <%= radio_button_tag "post[rating]", "Questionable", params[:rating].blank? || (params[:rating] == "q"), :id => "post_rating_questionable", :tabindex => 6 %>
+                <%= t('ratings.q') %>
+              </label>
 
-              <input id="post_rating_safe" name="post[rating]" type="radio" value="Safe" <% if (params[:rating] or "q") == "s" %>checked="checked"<% end %> tabindex="7">
-              <label for="post_rating_safe"><%= t('ratings.s') %></label>
+              <label>
+                <%= radio_button_tag "post[rating]", "Safe", params[:rating] == "s", :id => "post_rating_safe", :tabindex => 7 %>
+                <%= t('ratings.s') %>
+              </label>
             </td>
           </tr>
           <% if @current_user.is_contributor_or_higher? %>
@@ -168,5 +180,11 @@
   if(TagCompletion)
     TagCompletion.observe_tag_changes_on_submit($("edit-form"), $("post_tags"), null);
 </script>
+
+<%= render :partial => "post/artist_commentary_script" %>
+<script type="text/javascript">
+setup_artist_commentary_callbacks('.artist_commentary_wrapper_edit ')
+</script>
+
 
 <%= render :partial => "footer" %>

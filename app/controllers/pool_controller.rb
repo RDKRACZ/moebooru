@@ -149,7 +149,7 @@ class PoolController < ApplicationController
     end
 
     if request.post?
-      @pool.update_attributes(pool_params)
+      @pool.update(pool_params)
       respond_to_success("Pool updated", :action => "show", :id => params[:id])
     end
   end
@@ -342,14 +342,36 @@ class PoolController < ApplicationController
   # Generate a ZIP control file for nginx, and redirect to the ZIP.
   if CONFIG["pool_zips"]
     def zip
+      if params[:hash].is_a?(String) && params[:hash] =~ /^\h{32}$/
+        pool_zip = Rails.cache.read("pool_zip:#{params[:hash]}")
+
+        return head(:not_found) if pool_zip.nil?
+
+        Moebooru::SkipCookie.apply(request)
+
+        if pool_zip[:data].empty?
+          pool_zip[:data] = Moebooru::Zip::EMPTY
+        else
+          headers['X-Archive-Files'] = 'zip'
+        end
+
+        return send_data(pool_zip[:data], type: Mime[:zip], filename: pool_zip[:filename])
+      end
+
       pool = Pool.includes(:pool_posts => :post).find(params[:id])
 
-      @pool_zip = pool.get_zip_data(params)
+      pool_zip_data = pool.get_zip_data(params).map do |row|
+        "%s %s %s %s\n" % [row[:crc32], row[:file_size], row[:path], row[:filename]]
+      end.join
 
-      headers["X-Archive-Files"] = "zip"
-      send_data render_to_string(:formats => :txt),
-        :type => Mime[:zip],
-        :filename => pool.get_zip_filename(params)
+      hash = Digest::MD5.hexdigest(pool_zip_data)
+      pool_zip = {
+        data: pool_zip_data,
+        filename: pool.get_zip_filename(params),
+      }
+      Rails.cache.write "pool_zip:#{hash}", pool_zip
+
+      redirect_to hash: hash, jpeg: params[:jpeg]
     end
   end
 

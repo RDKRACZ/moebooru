@@ -1,5 +1,3 @@
-require "mirror"
-require "erb"
 include ERB::Util
 
 class Pool < ApplicationRecord
@@ -210,7 +208,7 @@ class Pool < ApplicationRecord
 
     # nginx version
     def get_zip_data(options = {})
-      return "" if pool_posts.empty?
+      return [] if pool_posts.empty?
 
       jpeg = options[:jpeg] || false
 

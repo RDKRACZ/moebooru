@@ -1,5 +1,3 @@
-require "mini_magick"
-
 module Moebooru
   module Resizer
     class ResizeError < Exception; end
@@ -13,9 +11,9 @@ module Moebooru
                         "sRGB" : "RGB"
 
     def resize(file_ext, input_path, output_path, output_size, output_quality)
-      input_image = MiniMagick::Image.new(input_path)
+      input_image = Moebooru::ImageSizeExif.path(input_path)
 
-      colorspace = input_image["%[colorspace]"]
+      colorspace = input_image[:colorspace]
 
       if output_size[:width] && output_size[:height].nil?
         output_size[:height] = input_image[:height] * output_size[:width] / input_image[:width]
@@ -51,9 +49,11 @@ module Moebooru
         convert << input_path
         convert.background BGCOLOR
         convert.flatten
+        convert.auto_orient
         convert.crop write_crop
         convert.resize write_size
         convert.repage.+
+        convert.interlace 'Line'
 
         if write_format =~ /\Ajpe?g\z/
           convert.sampling_factor "2x2,1x1,1x1"
