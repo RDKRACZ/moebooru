@@ -30,7 +30,7 @@ class AdvertisementsController < ApplicationController
 
   def update
     @ad = Advertisement.find(params[:id])
-    if @ad.update_attributes(params[:advertisement])
+    if @ad.update(params[:advertisement])
       flash[:success] = "Advertisement updated"
       redirect_to @ad
     else
@@ -61,8 +61,8 @@ class AdvertisementsController < ApplicationController
   end
 
   def redirect
-    ad = Advertisement.find(params[:id])
+    ad = Advertisement.where(status: 'active').find(params[:id])
     ad.increment!(:hit_count)
-    redirect_to ad.referral_url
+    redirect_to ad.referral_url, allow_other_host: true
   end
 end

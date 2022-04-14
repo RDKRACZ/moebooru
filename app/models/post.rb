@@ -21,6 +21,8 @@ class Post < ApplicationRecord
   scope :has_all_tags, lambda { |tags| where("posts.tags_array @> ARRAY[?]::varchar[]", Array(tags)) }
   scope :flagged, lambda { where "status = ?", "flagged" }
 
+  validates_length_of :source, maximum: 1000
+
   def self.slow_has_all_tags(tags)
     p = Post.scoped
     t_ids = Tag.where(:name => tags).pluck(:id)
@@ -151,11 +153,9 @@ class Post < ApplicationRecord
   end
 
   def voted_by
-    # FIXME: shouldn't include user_blacklist_tags at all (used by API return).
     @voted_by ||=
       User.select(:name, :id, "post_votes.score AS vote_score")
         .joins(:post_votes)
-        .includes(:user_blacklisted_tags)
         .where(:post_votes => { :post_id => id })
         .order("post_votes.updated_at DESC")
         .group_by(&:vote_score)
@@ -203,7 +203,7 @@ class Post < ApplicationRecord
   def normalized_source
     if source =~ /(pixiv\.net|pximg\.net)\/img/
       img_id = source[/(\d+)(_s|_m|(_big)?_p\d+)?\.\w+(\?\d+)?\z/, 1]
-      "http://www.pixiv.net/member_illust.php?mode=medium&illust_id=#{img_id}"
+      "https://www.pixiv.net/artworks/#{img_id}"
     elsif source =~ /\Ahttps?:\/\//i
       source
     else

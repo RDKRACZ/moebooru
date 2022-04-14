@@ -1,5 +1,3 @@
-require "digest/sha2"
-
 class UserController < ApplicationController
   layout "default"
   before_action :blocked_only, :only => [:authenticate, :update, :edit, :modify_blacklist]
@@ -13,8 +11,6 @@ class UserController < ApplicationController
   protected
 
   def save_cookies(user)
-    cookies[:login] = { :value => user.name, :expires => 1.year.from_now }
-    cookies[:pass_hash] = { :value => user.password_hash, :expires => 1.year.from_now, :httponly => true }
     session[:user_id] = user.id
   end
 
@@ -22,7 +18,7 @@ class UserController < ApplicationController
 
   def autocomplete_name
     keyword = params[:term].to_s
-    @users = User.where(["name ILIKE ?", "*#{keyword}*".to_escaped_for_sql_like]).limit(20).pluck(:name) if keyword.length >= 2
+    @users = User.where(["name ILIKE ?", "*#{keyword}*".to_escaped_for_sql_like]).order('LENGTH(name)', :name).limit(20).pluck(:name) if keyword.length >= 2
     respond_to do |format|
       format.json { render :json => (@users || []) }
     end
@@ -96,7 +92,7 @@ class UserController < ApplicationController
 
       redirect_to :action => "invites"
     else
-      @invited_users = User.where(:invited_by => @current_user.id).order("LOWER(name)")
+      @invited_users = User.where(:invited_by => @current_user.id).order('name_normalized')
     end
   end
 
@@ -111,45 +107,43 @@ class UserController < ApplicationController
   def authenticate
     save_cookies(@current_user)
 
-    if params[:url].blank?
-      path = { :action => "home" }
-    else
+    if params[:url].is_a?(String) && params[:url][0] == '/'
       path = params[:url]
     end
+
+    path ||= { :action => "home" }
 
     respond_to_success("You are now logged in", path)
   end
 
+  # TODO: merge with .authenticate
   def check
-    if request.post?
-      user = User.find_by_name(params[:username])
-      ret = { :exists => false }
-      ret[:name] = params[:username]
+    user = User.find_by_name(params[:username])
+    ret = { :exists => false }
+    ret[:name] = params[:username]
 
-      unless user
-        respond_to_success("User does not exist", {}, :api => { :response => "unknown-user" }.merge(ret))
-        return
-      end
-
-      # Return some basic information about the user even if the password isn't given, for
-      # UI cosmetics.
-      ret[:exists] = true
-      ret[:id] = user.id
-      ret[:name] = user.name
-      ret[:no_email] = user.email.blank?
-
-      user = User.authenticate(params[:username], params[:password] || "")
-      unless user
-        respond_to_success("Wrong password", {}, :api => { :response => "wrong-password" }.merge(ret))
-        return
-      end
-
-      ret[:pass_hash] = user.password_hash
-      ret[:user_info] = user.user_info_cookie
-      respond_to_success("Successful", {}, :api => { :response => "success" }.merge(ret))
-    else
-      redirect_to root_path
+    unless user
+      respond_to_success("User does not exist", {}, :api => { :response => "unknown-user" }.merge(ret))
+      return
     end
+
+    # Return some basic information about the user even if the password isn't given, for
+    # UI cosmetics.
+    ret[:exists] = true
+    ret[:id] = user.id
+    ret[:name] = user.name
+    ret[:no_email] = user.email.blank?
+
+    user = User.authenticate(params[:username], params[:password] || "")
+    unless user
+      respond_to_success("Wrong password", {}, :api => { :response => "wrong-password" }.merge(ret))
+      return
+    end
+
+    save_cookies(user)
+    ret[:pass_hash] = user.password_hash
+    ret[:user_info] = user.user_info_cookie
+    respond_to_success("Successful", {}, :api => { :response => "success" }.merge(ret))
   end
 
   def login
@@ -180,13 +174,13 @@ class UserController < ApplicationController
   end
 
   def logout
-    session[:user_id] = nil
-    cookies[:login] = nil
-    cookies[:pass_hash] = nil
+    reset_session
 
-    dest = { :action => "home" }
-    dest = params[:from] if params[:from]
-    respond_to_success("You are now logged out", dest)
+    flash[:notice] = 'You are now logged out'
+
+    respond_to do |format|
+      format.js
+    end
   end
 
   def update
@@ -195,7 +189,7 @@ class UserController < ApplicationController
       return
     end
 
-    if @current_user.update_attributes(user_params_for_update)
+    if @current_user.update(user_params_for_update)
       respond_to_success("Account settings saved", :action => "edit")
     else
       if params[:render] && params[:render][:view]
@@ -260,12 +254,10 @@ class UserController < ApplicationController
           UserMailer.new_password(@user, new_password).deliver_now
           respond_to_success("Password reset. Check your email in a few minutes.",
                              { :action => "login" }, :api => { :result => "success" })
-          return
         end
       rescue Net::SMTPSyntaxError, Net::SMTPFatalError
         respond_to_success("Your email address was invalid",
                            { :action => "login" }, :api => { :result => "invalid-email" })
-        return
       end
     else
       @user = User.new
@@ -332,7 +324,7 @@ class UserController < ApplicationController
       users = User.where(:level => CONFIG["user_levels"]["Unactivated"])
       users.each do |user|
         if User.confirmation_hash(user.name) == params["hash"]
-          user.update_attribute(:level, CONFIG["starting_level"])
+          user.update(:level => CONFIG["starting_level"])
           flash[:notice] = "Account has been activated"
           break
         end

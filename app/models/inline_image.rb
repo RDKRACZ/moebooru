@@ -1,5 +1,3 @@
-require "fileutils"
-
 # InlineImages can be uploaded, copied directly from posts, or cropped from other InlineImages.
 # To create an image by cropping a post, the post must be copied to an InlineImage of its own,
 # and cropped from there; the only UI for cropping is InlineImage->InlineImage.
@@ -112,10 +110,10 @@ class InlineImage < ApplicationRecord
       return false
     end
 
-    imgsize = ImageSize.path(tempfile_image_path)
+    imgsize = Moebooru::ImageSizeExif.path(tempfile_image_path)
 
-    unless imgsize.format.nil?
-      self.file_ext = imgsize.format.to_s.gsub(/jpeg/i, "jpg").downcase
+    if imgsize[:type]
+      self.file_ext = imgsize[:type].gsub(/jpeg/i, "jpg").downcase
     end
 
     unless %w(jpg png gif).include?(file_ext.downcase)
@@ -128,9 +126,9 @@ class InlineImage < ApplicationRecord
 
   def set_image_dimensions
     return true if width && height
-    imgsize = ImageSize.path(tempfile_image_path)
-    self.width = imgsize.width
-    self.height = imgsize.height
+    imgsize = Moebooru::ImageSizeExif.path(tempfile_image_path)
+    self.width = imgsize[:width]
+    self.height = imgsize[:height]
 
     true
   end
@@ -233,13 +231,7 @@ class InlineImage < ApplicationRecord
   end
 
   def generate_hash(path)
-    md5_obj = Digest::MD5.new
-    File.open(path, "rb") do |fp|
-      buf = ""
-      while fp.read(1024 * 64, buf) do md5_obj << buf end
-    end
-
-    self.md5 = md5_obj.hexdigest
+    self.md5 = Moebooru::Hasher.compute_one(path, :md5)
   end
 
   def has_sample?

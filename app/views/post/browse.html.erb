@@ -1,7 +1,7 @@
 <% content_for :html_header do %>
   <script type="text/javascript">
     if(navigator.platform.indexOf("iPhone") != -1 || navigator.platform == "iPad" || navigator.platform == "iPod") // includes "iPhone Simulator"
-      document.write('<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">');
+      document.write('<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">');
     else
       document.write('<meta name="viewport" content="target-densityDpi=150, user-scalable=0;">');
 
@@ -25,8 +25,6 @@
 <% end %>
 
 <div id="sizing-body">
-
-<div id="debug2" style="position: fixed; bottom: 100px; background-color: #000;"></div>
 
 <div id="post-browser" class="post-browser" style="display: none;">
   <a style="display: none;" class="browser-thumb-hover-overlay" href="#" tabindex="-1">
@@ -82,7 +80,7 @@
 
     <div class="vote-popup-expand" style="display: none;"></div>
     <div id="vote-popup-container" class="vote-popup-container vote-popup-hidden" style="display: none;">
-      <%= vote_widget(@current_user, "vote-popup") %>
+      <%= vote_widget(@current_user) %>
     </div>
     <div class="vote-popup-flash" style="display: none;"><div class="flash-item"></div></div>
   </div>
@@ -110,7 +108,7 @@
         <span style="background-color: #000; margin-left: 0.25em; padding: 0 0.5em;" class="post-hidden"><%= t('.hidden') %></span>
       </div>
     <div class="pool-info"></div>
-    <div><%= t('.by.all_html', :text => t('.by.text'), :ago => t('time.x_ago_html', :t => content_tag(:span, '', :class => 'posted-at')), :by => content_tag(:span, t('.by.by_html', :user => link_to('', '#')), :class => 'posted-by')) %></div>
+    <div><%= t('.by.all_html', :text => t('.by.text'), :ago => content_tag(:span, '', :class => 'posted-at'), :by => content_tag(:span, t('.by.by_html', :user => link_to('', '#')), :class => 'posted-by')) %></div>
     <div id="vote-container" class="vote-container"><%= t('.score') %>: <span class="post-score"></span> <%= vote_widget(@current_user) %> <span class="vote-desc"></span></div>
     <div class="post-frames">
       <%= t('.frames') %>: <div class="post-frame-list"></div>
@@ -205,7 +203,7 @@
 
       <div class="frame-editor" style="display: none">
         <table class="frame-list" style="margin: 0.5em 0;" cellspacing=0 cellpadding=0><tbody></tbody></table>
-        <a href="#" class="frame-editor-add"><%= t('.frames') %></a>
+        <a href="#" class="frame-editor-add"><%= t('.add') %></a>
       </div>
 
       <div style="background-color: #003; font-size: 125%;">
@@ -225,12 +223,9 @@
 </div>
 
 <script type="text/javascript">
-var debug;
 
 document.observe("dom:loaded", function()
 {
-  debug = new NewDebug();
-
   InitAdvancedEditing();
   InitializeFullScreenBrowserHandlers();
   Post.init_blacklisted();
@@ -334,25 +329,7 @@ document.observe("dom:loaded", function()
     });
   }
 
-  if(AndroidDetectWindowSize.required())
-  {
-    /* We need to figure out the window size.  Do this before starting up the browser,
-     * to speed it up. */
-    var trigger_initialization = function(e)
-    {
-      document.stopObserving("resize", trigger_initialization);
-      initialize_browser.defer();
-    }
-    document.observe("resize", trigger_initialization);
-
-    /* This will always fire resize at least once. */
-    new AndroidDetectWindowSize();
-  }
-  else
-  {
-    /* Normal initialization. */
-    initialize_browser();
-  }
+  initialize_browser();
 }.bindAsEventListener(null));
 </script>
 

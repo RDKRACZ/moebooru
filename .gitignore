@@ -12,3 +12,10 @@
 /public/sitemap*.xml.gz
 /tmp
 /vendor/bundle
+
+/public/packs
+/public/packs-test
+/node_modules
+
+/app/assets/builds/*
+!/app/assets/builds/.keep

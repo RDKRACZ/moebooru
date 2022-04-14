@@ -14,7 +14,7 @@
             <li><%= link_to t('.account.favorites'), controller: '/post', :action => :index, :tags => "order:vote vote:3:#{@current_user.name}" %></li>
             <li><%= link_to t('.account.settings'), controller: '/user', :action => :edit %></li>
             <li><%= link_to t('.account.change_password'), controller: '/user', :action => :change_password %></li>
-            <li><%= link_to t('.account.logout'), controller: '/user', :action => :logout, :from => request.url %></li>
+            <li><%= link_to t('.account.logout'), logout_path, remote: true, method: :delete %></li>
           <% end %>
         </ul>
       </li>
@@ -203,8 +203,8 @@
   <% end %>
 </div>
 
-<% cache "forum_posts_latest", :skip_digest => true do %>
-  <script id="forum-posts-latest" type="application/json">
-      <%= json_escape render("layouts/menu_forum_listing.json").html_safe %>
-  </script>
-<% end %>
+<script id="forum-posts-latest" type="application/json">
+  <%= Rails.cache.fetch "forum_posts_latest_v3" do
+    ForumPost.latest.map { |p| p.slice(:id, :pages, :title, :updated_at) }.to_json
+  end.html_safe %>
+</script>

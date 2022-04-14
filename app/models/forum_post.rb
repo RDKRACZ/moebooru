@@ -63,14 +63,14 @@ class ForumPost < ApplicationRecord
     def update_parent_on_destroy
       unless is_parent?
         p = parent
-        p.update_attributes(:response_count => p.response_count - 1)
+        p.update(:response_count => p.response_count - 1)
       end
     end
 
     def update_parent_on_create
       unless is_parent?
         p = parent
-        p.update_attributes(:updated_at => updated_at, :response_count => p.response_count + 1, :last_updated_by => creator_id)
+        p.update(:updated_at => updated_at, :response_count => p.response_count + 1, :last_updated_by => creator_id)
       end
     end
 
@@ -150,13 +150,13 @@ class ForumPost < ApplicationRecord
 
   def initialize_last_updated_by
     if is_parent?
-      update_attribute(:last_updated_by, creator_id)
+      update(:last_updated_by => creator_id)
     end
   end
 
   def clear_cache
     Rails.cache.delete "forum_posts"
-    Rails.cache.delete "views/forum_posts_latest"
+    Rails.cache.delete "forum_posts_latest_v3"
   end
 
   def last_updater

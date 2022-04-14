@@ -1,5 +1,3 @@
-require "digest/sha1"
-
 class User < ApplicationRecord
   has_many :user_logs
   has_many :post_votes
@@ -16,12 +14,12 @@ class User < ApplicationRecord
   def log(ip)
     Rails.cache.fetch({ :type => :user_logs, :id => id, :ip => ip }, :expires_in => 10.minutes) do
       Rails.cache.fetch({ :type => :user_logs, :id => :all }, :expires_in => 1.day) do
-        UserLog.where("created_at < ?", 3.days.ago).delete_all
+        UserLog.where("created_at < ?", 15.days.ago).delete_all
       end
       begin
-        log_entry = user_logs.find_or_initialize_by(:ip_addr => ip)
-        log_entry.created_at = Time.now
-        log_entry.save
+        current_time = Time.now
+        user_logs.find_or_initialize_by(ip_addr: ip).update created_at: current_time
+        update_column :last_logged_in_at, current_time
       # Once in a blue moon there will be race condition on find_or_initialize
       # resulting unique key constraint violation.
       # It doesn't really affect anything so just ignore that error.
@@ -29,6 +27,12 @@ class User < ApplicationRecord
         true
       end
     end
+  end
+
+  def name=(value)
+    self.name_normalized = value.try(:downcase)
+
+    super
   end
 
   module UserBlacklistMethods
@@ -79,7 +83,11 @@ class User < ApplicationRecord
       end
 
       def authenticate_hash(name, pass)
-        where("LOWER(users.name) = LOWER(?)", name).where(:password_hash => pass).first
+        return unless name.is_a?(String) && name.present?
+
+        user = find_by(name_normalized: name.downcase)
+
+        user if user && ActiveSupport::SecurityUtils.secure_compare(user.password_hash, pass)
       end
 
       def sha1(pass)
@@ -143,14 +151,14 @@ class User < ApplicationRecord
       end
 
       def find_by_name(name)
-        find_by("LOWER(name) = LOWER(?)", name)
+        find_by(name_normalized: name.downcase) if name.is_a?(String) && name.present?
       end
     end
 
     def self.included(m)
       m.extend(ClassMethods)
       m.validates_length_of :name, :within => 2..20, :on => :create
-      m.validates_format_of :name, :with => /\A[^\s;,]+\Z/, :on => :create, :message => "cannot have whitespace, commas, or semicolons"
+      m.validates_format_of :name, :with => /\A[^\p{Space};,]+\Z/, :on => :create, :message => "cannot have whitespace, commas, or semicolons"
       #      validates_format_of :name, :with => /^(Anonymous|[Aa]dministrator)/, :on => :create, :message => "this is a disallowed username"
       m.validates_uniqueness_of :name, :case_sensitive => false, :on => :create
       m.after_save :update_cached_name
@@ -170,17 +178,13 @@ class User < ApplicationRecord
     def to_xml(options = {})
       options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
-      xml.post(:name => name, :id => id) do
-        blacklisted_tags_array.each do |t|
-          xml.blacklisted_tag(:tag => t)
-        end
-
+      xml.user(:name => name, :id => id) do
         yield options[:builder] if block_given?
       end
     end
 
     def as_json(*args)
-      { :name => name, :blacklisted_tags => blacklisted_tags_array, :id => id }.as_json(*args)
+      { :name => name, :id => id }.as_json(*args)
     end
 
     def user_info_cookie
@@ -533,7 +537,7 @@ class User < ApplicationRecord
       FileUtils.mv(tempfile_path, avatar_path)
       FileUtils.chmod(0775, avatar_path)
 
-      update_attributes(
+      update(
         :avatar_post_id => params[:post_id],
         :avatar_top => params[:top],
         :avatar_bottom => params[:bottom],
@@ -657,20 +661,20 @@ class User < ApplicationRecord
   def self.with_params(params)
     res = all
 
-    res = res.where("name ILIKE ?", "*#{params[:name].tr(" ", "_")}*".to_escaped_for_sql_like) if params[:name]
+    res = res.where("name ILIKE ?", "*#{params[:name].tr(" ", "_")}*".to_escaped_for_sql_like) if params[:name].is_a?(String) && params[:name].present?
     res = res.where(:level => params[:level]) if params[:level] && params[:level] != "any"
     res = res.where(:id => params[:id]) if params[:id]
 
     order =
       case params[:order]
-      when "name" then "LOWER(name)"
+      when "name" then "name_normalized"
       when "posts" then "(SELECT count(*) FROM posts WHERE user_id = users.id) DESC"
       when "favorites" then "(SELECT count(*) FROM favorites WHERE user_id = users.id) DESC"
       when "notes" then "(SELECT count(*) FROM note_versions WHERE user_id = users.id) DESC"
       else "id DESC"
       end
 
-    res.order(order)
+    res.order(Arel.sql(order))
   end
 
   # FIXME: ensure not used and then nuke
@@ -688,7 +692,7 @@ class User < ApplicationRecord
 
       case params[:order]
       when "name"
-        builder.order "lower(name)"
+        builder.order "name_normalized"
 
       when "posts"
         builder.order "(SELECT count(*) FROM posts WHERE user_id = users.id) DESC"
